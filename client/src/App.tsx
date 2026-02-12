@@ -25,11 +25,21 @@ import Cookies from "./pages/Cookies";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { OnboardingGuard } from "./components/OnboardingGuard";
 import { EmailVerificationGuard } from "./components/EmailVerificationGuard";
+import Login from "./pages/Login";
+import OAuthCallback from "./pages/OAuthCallback";
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={ClientWelcome} />
+      
+      {/* Login (Public) */}
+      <Route path="/login" component={Login} />
+      
+      {/* OAuth Callbacks (Public) */}
+      <Route path="/auth/callback/google" component={OAuthCallback} />
+      <Route path="/auth/callback/microsoft" component={OAuthCallback} />
+      <Route path="/auth/callback/apple" component={OAuthCallback} />
       
       {/* Email Verification (Public) */}
       <Route path="/verify-email/:token" component={VerifyEmail} />

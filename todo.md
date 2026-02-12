@@ -641,3 +641,74 @@
 - [ ] Rate limiting : max 3 codes par heure par email
 - [ ] Interface de saisie du code (6 champs séparés)
 - [ ] Resend code button (avec cooldown de 60 secondes)
+
+
+## NOUVELLES FONCTIONNALITÉS - LISTE COMPLÈTE CLIENT
+
+### 🔐 PRIORITÉ 1 : Sécurité & Authentification
+- [x] OAuth Google (connexion avec compte Google)
+- [x] OAuth Microsoft (connexion avec compte Microsoft)
+- [x] OAuth Apple (connexion avec compte Apple)
+- [x] Interface de connexion par email avec code à 6 chiffres (frontend)
+- [ ] Rate limiting renforcé sur toutes les routes sensibles
+- [ ] Protection CSRF sur tous les formulaires
+- [ ] Authentification à deux facteurs (2FA) optionnelle
+
+### 💰 Système Commercial Complet
+- [ ] Devis intelligent avec benchmarking prix marché (Perplexity Pro)
+- [ ] Calcul réaliste incluant coûts IA/LLM/API
+- [ ] Calcul infrastructure (hébergement, nom de domaine, emails dédiés)
+- [ ] Services optionnels (marketing, accompagnement, maintenance)
+- [ ] Interface de génération de devis avec formulaire détaillé
+- [ ] Interface de validation devis client (checkboxes CGU/CGV)
+- [ ] Génération PDF devis avec logo IMOTION et charte graphique
+- [ ] Génération PDF factures avec logo IMOTION
+- [ ] Génération PDF PV de recette avec grille de validation
+- [ ] Envoi automatique accusé de réception après validation devis
+- [ ] Système de facturation automatique selon phases
+
+### 📊 Dashboard Administrateur Ultra-Complet
+- [ ] Analytics temps réel (visiteurs, inscriptions, conversions, taux de rebond)
+- [ ] Finance & trésorerie (CA réalisé, pipeline, prévisions mensuelles)
+- [ ] CRM intégré avec fiches clients détaillées et historique complet
+- [ ] Gestion des avis clients avec système de modération (approuver/rejeter)
+- [ ] Publication des avis approuvés sur la page d'accueil
+- [ ] Outils Marketing (campagnes, calcul ROI, A/B testing)
+- [ ] SEO & Référencement (positions Google, backlinks, mots-clés)
+- [ ] Roadmap produit avec système de votes clients
+- [ ] Tableau de bord unifié avec tous les KPIs
+
+### 🤖 Génération CDC Ultra-Technique
+- [ ] Intégration Perplexity Labs pour analyse approfondie
+- [ ] Génération CDC ultra-technique avec recommandations d'experts
+- [ ] Transformation CDC → Prompt Engineering pour Product Builder
+- [ ] Affichage du prompt uniquement pour l'admin (invisible client)
+- [ ] Calcul automatique du devis basé sur le CDC généré
+- [ ] Estimation réaliste tenant compte de la complexité technique
+
+### ⏰ Automatisations CRON
+- [ ] Relances devis automatiques (J+3, J+7, J+14)
+- [ ] Relances paiements automatiques (J+7, J+14 après échéance)
+- [ ] Génération automatique PV de recette 15 jours après livraison
+- [ ] Rapports hebdomadaires pour consultant (activité, CA, pipeline)
+- [ ] Rapports mensuels pour consultant (bilan complet)
+- [ ] Facturation automatique selon phases de paiement
+- [ ] Notifications automatiques pour événements importants
+
+### 🎨 Design & UX
+- [ ] Vérifier visibilité logo IMOTION (26112.png) sur TOUTES les pages
+- [ ] Logo dans header, footer, sidebar
+- [ ] Logo dans emails (vérification, devis, notifications)
+- [ ] Logo dans documents PDF (devis, factures, PV recette)
+- [ ] Design moderne et actuel (pas générique comme Lovable)
+- [ ] Police système native ultra-clean partout
+- [ ] Animations fluides et micro-interactions
+
+### 🔒 Sécurité Maximale
+- [ ] Audit de sécurité complet de l'application
+- [ ] Protection contre injections SQL
+- [ ] Protection contre XSS
+- [ ] Protection contre CSRF
+- [ ] Validation stricte de toutes les entrées utilisateur
+- [ ] Chiffrement des données sensibles
+- [ ] Logs de sécurité et monitoring

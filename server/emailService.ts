@@ -260,3 +260,125 @@ export async function sendEmailVerification(
 
   return sendEmail({ to: userEmail, subject, text, html });
 }
+
+/**
+ * Send email login code
+ */
+export async function sendEmailLoginCode(email: string, code: string): Promise<boolean> {
+  const subject = 'Votre code de connexion IMOTION';
+  
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <style>
+        body {
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          line-height: 1.6;
+          color: #333;
+          max-width: 600px;
+          margin: 0 auto;
+          padding: 20px;
+        }
+        .header {
+          text-align: center;
+          padding: 20px 0;
+          border-bottom: 3px solid #d8232a;
+        }
+        .logo {
+          max-width: 200px;
+          height: auto;
+        }
+        .content {
+          padding: 30px 20px;
+        }
+        .code-box {
+          background: #f5f5f5;
+          border: 2px solid #d8232a;
+          border-radius: 8px;
+          padding: 20px;
+          text-align: center;
+          margin: 30px 0;
+        }
+        .code {
+          font-size: 36px;
+          font-weight: bold;
+          color: #d8232a;
+          letter-spacing: 8px;
+          font-family: monospace;
+        }
+        .footer {
+          text-align: center;
+          padding: 20px;
+          color: #666;
+          font-size: 12px;
+          border-top: 1px solid #ddd;
+          margin-top: 30px;
+        }
+        .warning {
+          background: #fff3cd;
+          border-left: 4px solid #f59e0b;
+          padding: 12px;
+          margin: 20px 0;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="header">
+        <h1 style="color: #d8232a; margin: 0;">IMOTION Discovery Pro</h1>
+        <p style="color: #666; margin: 10px 0 0 0;">Votre Partenaire en Transformation Digitale</p>
+      </div>
+      
+      <div class="content">
+        <h2>Code de connexion</h2>
+        <p>Bonjour,</p>
+        <p>Vous avez demandé à vous connecter à votre espace IMOTION Discovery Pro.</p>
+        <p>Voici votre code de connexion :</p>
+        
+        <div class="code-box">
+          <div class="code">${code}</div>
+          <p style="margin: 10px 0 0 0; color: #666;">Ce code expire dans 10 minutes</p>
+        </div>
+        
+        <div class="warning">
+          <strong>⚠️ Sécurité :</strong> Si vous n'avez pas demandé ce code, ignorez cet email. 
+          Ne partagez jamais ce code avec qui que ce soit.
+        </div>
+        
+        <p>Vous avez des questions ? Contactez-nous à <a href="mailto:contact@imotion-conseil.fr">contact@imotion-conseil.fr</a></p>
+      </div>
+      
+      <div class="footer">
+        <p><strong>IMOTION Conseil</strong></p>
+        <p>Email : contact@imotion-conseil.fr | Tél : 07 86 97 68 88</p>
+        <p>© ${new Date().getFullYear()} IMOTION. Tous droits réservés.</p>
+      </div>
+    </body>
+    </html>
+  `;
+
+  const text = `
+Bonjour,
+
+Vous avez demandé à vous connecter à votre espace IMOTION Discovery Pro.
+
+Votre code de connexion : ${code}
+
+Ce code expire dans 10 minutes.
+
+⚠️ Sécurité : Si vous n'avez pas demandé ce code, ignorez cet email.
+
+---
+IMOTION Conseil
+Email : contact@imotion-conseil.fr
+Tél : 07 86 97 68 88
+  `.trim();
+
+  return sendEmail({
+    to: email,
+    subject,
+    text,
+    html,
+  });
+}
