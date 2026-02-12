@@ -111,3 +111,29 @@
 - [x] Routes tRPC pour toutes les opérations CRM
 - [ ] Interface calendrier des rendez-vous (optionnel)
 - [ ] Interface timeline des interactions (optionnel)
+
+
+## GÉNÉRATION DE DOCUMENTS FINALISÉE
+
+### Conversion PDF
+- [x] Implémenter la conversion HTML → PDF avec Puppeteer
+- [x] Optimiser le rendu PDF (marges, en-têtes, pieds de page)
+- [x] Ajouter le logo IMOTION dans les PDF générés
+- [x] Créer une page de couverture professionnelle
+- [x] Appliquer la charte graphique IMOTION au PDF
+
+### Génération Word
+- [ ] Implémenter la génération de documents .docx
+- [ ] Appliquer la mise en forme IMOTION (couleurs, polices)
+- [ ] Structurer les sections du CDC en Word
+
+### Stockage et Téléchargement
+- [x] Uploader les documents générés vers S3
+- [x] Créer les routes tRPC pour téléchargement
+- [x] Sauvegarder les métadonnées dans la table documents
+
+### Interface Utilisateur
+- [ ] Ajouter les boutons "Télécharger CDC (PDF)" dans l'interface consultant
+- [ ] Ajouter les boutons "Télécharger CDC (Word)"
+- [ ] Ajouter les boutons "Télécharger Contrat (PDF/Word)"
+- [ ] Afficher l'historique des documents générés

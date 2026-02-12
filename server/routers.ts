@@ -54,6 +54,8 @@ import {
   determineComplexity,
   generateQualificationFlags,
 } from "./conversationAI";
+import { generateCDC, generateContract } from "./documentGeneration";
+import { generatePDFFromMarkdown, generateWordFromMarkdown } from "./pdfGeneration";
 import { notifyOwner } from "./_core/notification";
 import { TRPCError } from "@trpc/server";
 
@@ -351,7 +353,187 @@ export const appRouter = router({
         return getDocumentsByProjectId(input.projectId);
       }),
 
-    // Document generation will be implemented in phase 5
+    generateCDC: consultantProcedure
+      .input(z.object({
+        projectId: z.number(),
+        format: z.enum(["pdf", "word", "both"]),
+      }))
+      .mutation(async ({ input }) => {
+        const project = await getProjectById(input.projectId);
+        
+        if (!project) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Project not found' });
+        }
+
+        // Get conversation messages
+        const messages = await getMessagesByProjectId(input.projectId);
+
+        // Generate CDC content with AI
+        const cdcMarkdown = await generateCDC({
+          title: project.title,
+          clientName: `Client #${project.clientId}`,
+          extractedData: project.extractedData || {},
+          psychologicalProfile: project.psychologicalProfile || {},
+          messages: messages.map(msg => ({
+            role: msg.role,
+            content: msg.content,
+            createdAt: msg.createdAt,
+          })),
+        });
+
+        const results: { pdfUrl?: string; wordUrl?: string } = {};
+
+        // Generate PDF if requested
+        if (input.format === 'pdf' || input.format === 'both') {
+          const pdfUrl = await generatePDFFromMarkdown(
+            cdcMarkdown,
+            {
+              title: `Cahier des Charges - ${project.title}`,
+              author: 'IMOTION Conseil',
+              subject: 'Cahier des Charges',
+              keywords: 'CDC, Cahier des charges, IMOTION',
+            },
+            input.projectId,
+            'cdc'
+          );
+
+          // Save document metadata
+          await createDocument({
+            projectId: input.projectId,
+            type: 'cdc',
+            title: `Cahier des Charges - ${project.title}`,
+            format: 'pdf',
+            s3Key: pdfUrl.split('.com/')[1] || pdfUrl,
+            s3Url: pdfUrl,
+            generatedBy: 'ai',
+          });
+
+          results.pdfUrl = pdfUrl;
+        }
+
+        // Generate Word if requested
+        if (input.format === 'word' || input.format === 'both') {
+          const wordUrl = await generateWordFromMarkdown(
+            cdcMarkdown,
+            {
+              title: `Cahier des Charges - ${project.title}`,
+              author: 'IMOTION Conseil',
+              subject: 'Cahier des Charges',
+            },
+            input.projectId,
+            'cdc'
+          );
+
+          await createDocument({
+            projectId: input.projectId,
+            type: 'cdc',
+            title: `Cahier des Charges - ${project.title}`,
+            format: 'docx',
+            s3Key: wordUrl.split('.com/')[1] || wordUrl,
+            s3Url: wordUrl,
+            generatedBy: 'ai',
+          });
+
+          results.wordUrl = wordUrl;
+        }
+
+        return results;
+      }),
+
+    generateContract: consultantProcedure
+      .input(z.object({
+        projectId: z.number(),
+        format: z.enum(["pdf", "word", "both"]),
+      }))
+      .mutation(async ({ input }) => {
+        const project = await getProjectById(input.projectId);
+        
+        if (!project) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Project not found' });
+        }
+
+        // Get conversation messages
+        const messages = await getMessagesByProjectId(input.projectId);
+
+        // First generate CDC
+        const cdcMarkdown = await generateCDC({
+          title: project.title,
+          clientName: `Client #${project.clientId}`,
+          extractedData: project.extractedData || {},
+          psychologicalProfile: project.psychologicalProfile || {},
+          messages: messages.map(msg => ({
+            role: msg.role,
+            content: msg.content,
+            createdAt: msg.createdAt,
+          })),
+        });
+
+        // Then generate contract based on CDC
+        const contractMarkdown = await generateContract(cdcMarkdown, {
+          title: project.title,
+          clientName: `Client #${project.clientId}`,
+          extractedData: project.extractedData || {},
+          psychologicalProfile: project.psychologicalProfile || {},
+          messages: [],
+        });
+
+        const results: { pdfUrl?: string; wordUrl?: string } = {};
+
+        // Generate PDF if requested
+        if (input.format === 'pdf' || input.format === 'both') {
+          const pdfUrl = await generatePDFFromMarkdown(
+            contractMarkdown,
+            {
+              title: `Contrat de Prestation - ${project.title}`,
+              author: 'IMOTION Conseil',
+              subject: 'Contrat de Prestation',
+              keywords: 'Contrat, Prestation, IMOTION',
+            },
+            input.projectId,
+            'contract'
+          );
+
+          await createDocument({
+            projectId: input.projectId,
+            type: 'contract',
+            title: `Contrat de Prestation - ${project.title}`,
+            format: 'pdf',
+            s3Key: pdfUrl.split('.com/')[1] || pdfUrl,
+            s3Url: pdfUrl,
+            generatedBy: 'ai',
+          });
+
+          results.pdfUrl = pdfUrl;
+        }
+
+        // Generate Word if requested
+        if (input.format === 'word' || input.format === 'both') {
+          const wordUrl = await generateWordFromMarkdown(
+            contractMarkdown,
+            {
+              title: `Contrat de Prestation - ${project.title}`,
+              author: 'IMOTION Conseil',
+              subject: 'Contrat de Prestation',
+            },
+            input.projectId,
+            'contract'
+          );
+
+          await createDocument({
+            projectId: input.projectId,
+            type: 'contract',
+            title: `Contrat de Prestation - ${project.title}`,
+            format: 'docx',
+            s3Key: wordUrl.split('.com/')[1] || wordUrl,
+            s3Url: wordUrl,
+            generatedBy: 'ai',
+          });
+
+          results.wordUrl = wordUrl;
+        }
+
+        return results;
+      }),
   }),
 
   // ============ NOTIFICATION ROUTES ============
@@ -599,6 +781,8 @@ export const appRouter = router({
       return results;
     }),
   }),
+
+
 });
 
 export type AppRouter = typeof appRouter;
