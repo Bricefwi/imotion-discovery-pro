@@ -343,3 +343,30 @@
 - [ ] Ajouter une navigation rapide (sections principales)
 - [ ] Intégrer le footer dans toutes les pages de l'application
 - [ ] Ajouter le copyright et SIRET
+
+
+## SEO DYNAMIQUE & OPTIMISATION IA
+
+### Meta Tags & Open Graph
+- [ ] Créer un composant SEO Head dynamique
+- [ ] Ajouter meta tags par page (title, description, keywords)
+- [ ] Implémenter Open Graph pour réseaux sociaux
+- [ ] Ajouter Twitter Cards
+- [ ] Configurer les meta tags pour LLM (AI-friendly markup)
+
+### Données Structurées (Schema.org)
+- [ ] Ajouter JSON-LD pour Organization
+- [ ] Ajouter JSON-LD pour Service
+- [ ] Ajouter JSON-LD pour WebSite
+- [ ] Ajouter JSON-LD pour BreadcrumbList
+
+### Fichiers SEO
+- [ ] Créer sitemap.xml dynamique
+- [ ] Créer robots.txt optimisé
+- [ ] Ajouter favicon et app icons
+
+### Optimisation LLM/IA
+- [ ] Structurer le contenu avec semantic HTML
+- [ ] Ajouter des attributs aria pour accessibilité
+- [ ] Optimiser les balises heading (h1, h2, h3)
+- [ ] Ajouter des descriptions alt pour images
