@@ -363,3 +363,96 @@ export const emailVerifications = mysqlTable("email_verifications", {
 
 export type EmailVerification = typeof emailVerifications.$inferSelect;
 export type InsertEmailVerification = typeof emailVerifications.$inferInsert;
+
+
+/**
+ * Quotes table - stores project quotes/devis
+ */
+export const quotes = mysqlTable("quotes", {
+  id: int("id").autoincrement().primaryKey(),
+  projectId: int("projectId").notNull().references(() => projects.id),
+  consultantId: int("consultantId").notNull().references(() => users.id),
+  quoteNumber: varchar("quoteNumber", { length: 50 }).notNull().unique(),
+  status: mysqlEnum("status", ["draft", "sent", "accepted", "rejected", "expired"]).default("draft").notNull(),
+  
+  // Costs breakdown
+  directCosts: decimal("directCosts", { precision: 10, scale: 2 }).notNull(), // Coûts directs (développement, design, etc.)
+  indirectCosts: decimal("indirectCosts", { precision: 10, scale: 2 }).notNull(), // Coûts indirects (gestion projet, support, etc.)
+  totalHT: decimal("totalHT", { precision: 10, scale: 2 }).notNull(), // Total HT
+  vatRate: decimal("vatRate", { precision: 5, scale: 2 }).default("20.00").notNull(), // Taux TVA (20%)
+  vatAmount: decimal("vatAmount", { precision: 10, scale: 2 }).notNull(), // Montant TVA
+  totalTTC: decimal("totalTTC", { precision: 10, scale: 2 }).notNull(), // Total TTC
+  
+  // Line items (stored as JSON)
+  lineItems: json("lineItems").$type<Array<{
+    description: string;
+    quantity: number;
+    unitPrice: number;
+    total: number;
+    category: 'development' | 'design' | 'consulting' | 'support' | 'other';
+  }>>().notNull(),
+  
+  // Terms & Conditions
+  paymentTerms: text("paymentTerms"), // Conditions de paiement
+  deliveryTerms: text("deliveryTerms"), // Conditions de livraison
+  validityDays: int("validityDays").default(30).notNull(), // Validité du devis (jours)
+  
+  // CGU acceptance
+  cguAccepted: boolean("cguAccepted").default(false).notNull(),
+  cguAcceptedAt: timestamp("cguAcceptedAt"),
+  cguAcceptedBy: int("cguAcceptedBy").references(() => users.id),
+  
+  // Timestamps
+  sentAt: timestamp("sentAt"),
+  acceptedAt: timestamp("acceptedAt"),
+  rejectedAt: timestamp("rejectedAt"),
+  expiresAt: timestamp("expiresAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Quote = typeof quotes.$inferSelect;
+export type InsertQuote = typeof quotes.$inferInsert;
+
+/**
+ * Invoices table - stores invoices/factures
+ */
+export const invoices = mysqlTable("invoices", {
+  id: int("id").autoincrement().primaryKey(),
+  quoteId: int("quoteId").references(() => quotes.id),
+  projectId: int("projectId").notNull().references(() => projects.id),
+  consultantId: int("consultantId").notNull().references(() => users.id),
+  invoiceNumber: varchar("invoiceNumber", { length: 50 }).notNull().unique(),
+  status: mysqlEnum("status", ["draft", "sent", "paid", "overdue", "cancelled"]).default("draft").notNull(),
+  
+  // Amounts
+  totalHT: decimal("totalHT", { precision: 10, scale: 2 }).notNull(),
+  vatRate: decimal("vatRate", { precision: 5, scale: 2 }).default("20.00").notNull(),
+  vatAmount: decimal("vatAmount", { precision: 10, scale: 2 }).notNull(),
+  totalTTC: decimal("totalTTC", { precision: 10, scale: 2 }).notNull(),
+  
+  // Line items
+  lineItems: json("lineItems").$type<Array<{
+    description: string;
+    quantity: number;
+    unitPrice: number;
+    total: number;
+  }>>().notNull(),
+  
+  // Payment info
+  paymentMethod: varchar("paymentMethod", { length: 50 }), // Virement, CB, etc.
+  paymentReference: varchar("paymentReference", { length: 255 }), // Référence de paiement
+  dueDate: timestamp("dueDate").notNull(), // Date d'échéance
+  paidAt: timestamp("paidAt"), // Date de paiement
+  
+  // Legal mentions
+  legalMentions: text("legalMentions"), // Mentions légales
+  
+  // Timestamps
+  sentAt: timestamp("sentAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Invoice = typeof invoices.$inferSelect;
+export type InsertInvoice = typeof invoices.$inferInsert;

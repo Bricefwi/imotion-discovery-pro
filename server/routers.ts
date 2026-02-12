@@ -47,6 +47,16 @@ import {
   incrementSectionUsage,
 } from "./cdcTemplatesDb";
 import {
+  createQuote,
+  getQuoteById,
+  listQuotesByProject,
+  listQuotesByConsultant,
+  updateQuoteStatus,
+  deleteQuote,
+  calculateQuoteCosts,
+  generateQuoteNumber,
+} from "./quotesDb";
+import {
   createEmailVerification,
   getVerificationByToken,
   markEmailAsVerified,
@@ -1190,6 +1200,101 @@ export const appRouter = router({
       .input(z.object({ id: z.number() }))
       .mutation(async ({ input }) => {
         await incrementSectionUsage(input.id);
+        return { success: true };
+      }),
+  }),
+
+  // ========================================
+  // QUOTES & INVOICES ROUTES
+  // ========================================
+
+  quotes: router({
+    // Calculate quote costs (preview)
+    calculateCosts: consultantProcedure
+      .input(z.object({
+        complexity: z.enum(['simple', 'medium', 'complex']),
+        estimatedDays: z.number().min(1),
+        dailyRate: z.number().optional(),
+        includeSupport: z.boolean().optional(),
+        includeTraining: z.boolean().optional(),
+      }))
+      .query(({ input }) => {
+        return calculateQuoteCosts(input);
+      }),
+
+    // Create a new quote
+    create: consultantProcedure
+      .input(z.object({
+        projectId: z.number(),
+        estimatedDays: z.number().min(1),
+        complexity: z.enum(['simple', 'medium', 'complex']),
+        dailyRate: z.number().optional(),
+        includeSupport: z.boolean().optional(),
+        includeTraining: z.boolean().optional(),
+        paymentTerms: z.string().optional(),
+        deliveryTerms: z.string().optional(),
+        validityDays: z.number().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        return createQuote({
+          ...input,
+          consultantId: ctx.user.id,
+        });
+      }),
+
+    // Get quote by ID
+    getById: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => {
+        return getQuoteById(input.id);
+      }),
+
+    // List quotes by project
+    listByProject: consultantProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ input }) => {
+        return listQuotesByProject(input.projectId);
+      }),
+
+    // List quotes by consultant
+    listByConsultant: consultantProcedure
+      .query(async ({ ctx }) => {
+        return listQuotesByConsultant(ctx.user.id);
+      }),
+
+    // Update quote status
+    updateStatus: consultantProcedure
+      .input(z.object({
+        id: z.number(),
+        status: z.enum(['draft', 'sent', 'accepted', 'rejected', 'expired']),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        await updateQuoteStatus(input.id, input.status, ctx.user.id);
+        return { success: true };
+      }),
+
+    // Client accepts quote and CGU
+    acceptQuote: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        cguAccepted: z.boolean(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        if (!input.cguAccepted) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: 'Vous devez accepter les CGU pour valider le devis',
+          });
+        }
+        await updateQuoteStatus(input.id, 'accepted', ctx.user.id);
+        return { success: true };
+      }),
+
+    // Delete quote
+    delete: consultantProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        await deleteQuote(input.id);
         return { success: true };
       }),
   }),

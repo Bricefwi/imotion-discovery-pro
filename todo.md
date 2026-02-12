@@ -398,3 +398,32 @@
 - [ ] Redesigner les cartes avec glassmorphism
 - [ ] Améliorer les formulaires avec animations
 - [ ] Créer des transitions fluides entre pages
+
+
+## CORRECTIONS URGENTES & NOUVELLES FONCTIONNALITÉS
+
+### URGENT - Typographie illisible
+- [x] Réduire drastiquement les tailles de police (h1, h2, h3)
+- [x] Rétablir des tailles professionnelles et lisibles
+- [x] Tester sur toutes les pages
+
+### Système de Devis & Factures
+- [ ] Créer le schéma de base de données (quotes, invoices)
+- [ ] Implémenter le calcul automatique des coûts (directs + indirects)
+- [ ] Créer l'interface de génération de devis
+- [ ] Ajouter la validation et acceptation des CGU
+- [ ] Générer les devis en PDF avec charte IMOTION
+- [ ] Créer le système de facturation
+- [ ] Implémenter l'envoi automatique par email
+- [ ] Ajouter le suivi des paiements
+
+### Footer Complet
+- [ ] Créer le composant Footer avec tous les liens légaux
+- [ ] Ajouter les coordonnées complètes IMOTION
+- [ ] Intégrer les icônes réseaux sociaux
+- [ ] Ajouter la navigation rapide
+
+### Section Témoignages Clients
+- [ ] Créer une section témoignages sur la page d'accueil
+- [ ] Ajouter des témoignages clients réels ou exemples
+- [ ] Design avec photos et citations
