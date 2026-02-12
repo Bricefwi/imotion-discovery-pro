@@ -370,3 +370,31 @@
 - [ ] Ajouter des attributs aria pour accessibilité
 - [ ] Optimiser les balises heading (h1, h2, h3)
 - [ ] Ajouter des descriptions alt pour images
+
+
+## REFONTE GRAPHIQUE PREMIUM
+
+### Design System IMOTION 2.0
+- [ ] Créer une palette de couleurs raffinée (rouge #d8232a, noir #0a0a0a, gris #2d3748)
+- [x] Utiliser la police système native (-apple-system) pour un rendu ultra-clean
+- [ ] Définir une grille asymétrique innovante
+- [ ] Créer des composants UI sur-mesure (cartes, boutons, inputs)
+
+### Page d'accueil (Home.tsx)
+- [ ] Refondre le hero avec typographie monumentale
+- [ ] Créer des sections avec découpes diagonales
+- [ ] Ajouter des animations au scroll (GSAP ou Framer Motion)
+- [ ] Implémenter glassmorphism pour les cartes
+- [ ] Créer un footer premium avec toutes les informations
+
+### Dashboard Consultant
+- [ ] Redesigner avec layout asymétrique
+- [ ] Améliorer les cartes statistiques (ombres multicouches)
+- [ ] Ajouter des micro-interactions
+- [ ] Uniformiser avec la nouvelle charte
+
+### Composants globaux
+- [ ] Créer des boutons premium avec effets hover sophistiqués
+- [ ] Redesigner les cartes avec glassmorphism
+- [ ] Améliorer les formulaires avec animations
+- [ ] Créer des transitions fluides entre pages
