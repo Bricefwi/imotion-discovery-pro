@@ -3,6 +3,7 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { oauthRouter } from "./routers/oauth.router";
 import { emailLoginRouter } from "./routers/email-login.router";
+import { adminRouter } from "./routers/admin.router";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { z } from "zod";
 import {
@@ -132,6 +133,7 @@ export const appRouter = router({
   system: systemRouter,
   oauth: oauthRouter,
   emailLogin: emailLoginRouter,
+  admin: adminRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),

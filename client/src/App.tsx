@@ -27,6 +27,7 @@ import { OnboardingGuard } from "./components/OnboardingGuard";
 import { EmailVerificationGuard } from "./components/EmailVerificationGuard";
 import Login from "./pages/Login";
 import OAuthCallback from "./pages/OAuthCallback";
+import AdminDashboard from "./pages/AdminDashboard";
 
 function Router() {
   return (
@@ -104,6 +105,11 @@ function Router() {
       </Route>
       
       {/* Admin Routes */}
+      <Route path="/admin/dashboard">
+        <ProtectedRoute requiredRole="admin" redirectTo="/">
+          <AdminDashboard />
+        </ProtectedRoute>
+      </Route>
       <Route path="/admin/notifications">
         <ProtectedRoute requiredRole="admin" redirectTo="/">
           <AdminNotifications />
