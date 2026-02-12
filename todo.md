@@ -192,3 +192,36 @@
 - [x] Configurer l'endpoint /api/cron/execute
 - [x] Ajouter l'endpoint de test /api/cron/test
 - [x] Documenter la configuration pour le déploiement (CRON_SETUP.md)
+
+## NOUVELLES FONCTIONNALITÉS - GESTION RÔLES, ONBOARDING & TEMPS RÉEL
+
+### Système de Gestion des Rôles
+- [x] Étendre l'enum des rôles (admin, consultant, client, visiteur)
+- [ ] Créer les middlewares de protection par rôle
+- [ ] Implémenter les permissions granulaires par fonctionnalité
+- [ ] Créer une interface admin pour gérer les rôles utilisateurs
+
+### Onboarding Client Complet
+- [x] Créer la table client_profiles avec informations société exhaustives
+- [x] Implémenter le formulaire onboarding multi-étapes (4 étapes)
+- [x] Collecter : SIRET/SIREN, raison sociale, secteur d'activité, effectif, CA
+- [x] Collecter : Fonction du contact, ancienneté, décisionnaire
+- [x] Créer la fiche client complète et exhaustive
+- [ ] Ajouter la validation email obligatoire (envoi d'email de confirmation)
+- [ ] Ajouter la route dans App.tsx pour l'onboarding
+- [ ] Implémenter la vérification que l'utilisateur représente bien l'entreprise
+
+### Tableau de Bord Temps Réel
+- [ ] Installer socket.io pour WebSocket
+- [ ] Configurer le serveur WebSocket
+- [ ] Créer les événements temps réel (nouveau projet, mise à jour, message)
+- [ ] Implémenter les notifications push dans le dashboard consultant
+- [ ] Ajouter les indicateurs temps réel (projets actifs, messages non lus)
+
+### Templates CDC Personnalisables
+- [x] Créer la table cdc_templates
+- [x] Créer la table template_sections pour sections modulaires
+- [ ] Implémenter l'éditeur de templates pour consultants
+- [ ] Ajouter les variables dynamiques ({{client_name}}, {{budget}}, etc.)
+- [ ] Permettre la sauvegarde et réutilisation des templates
+- [ ] Implémenter la sélection de template lors de la génération de CDC

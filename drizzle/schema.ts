@@ -10,7 +10,7 @@ export const users = mysqlTable("users", {
   name: text("name"),
   email: varchar("email", { length: 320 }),
   loginMethod: varchar("loginMethod", { length: 64 }),
-  role: mysqlEnum("role", ["client", "consultant", "admin"]).default("client").notNull(),
+  role: mysqlEnum("role", ["visitor", "client", "consultant", "admin"]).default("visitor").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
@@ -247,3 +247,103 @@ export const cronJobs = mysqlTable("cron_jobs", {
 
 export type CronJob = typeof cronJobs.$inferSelect;
 export type InsertCronJob = typeof cronJobs.$inferInsert;
+
+/**
+ * Client profiles table - exhaustive company and user information for onboarding
+ */
+export const clientProfiles = mysqlTable("client_profiles", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().unique().references(() => users.id, { onDelete: "cascade" }),
+  // Company identification
+  siret: varchar("siret", { length: 14 }),
+  siren: varchar("siren", { length: 9 }),
+  companyName: varchar("companyName", { length: 255 }).notNull(),
+  legalForm: varchar("legalForm", { length: 100 }), // SARL, SAS, SA, etc.
+  sector: varchar("sector", { length: 100 }),
+  subSector: varchar("subSector", { length: 100 }),
+  // Company size and financials
+  employeeCount: mysqlEnum("employeeCount", ["1", "2-10", "11-50", "51-200", "201-500", "500+"]),
+  annualRevenue: mysqlEnum("annualRevenue", ["<100k", "100k-500k", "500k-1M", "1M-5M", "5M-10M", "10M+"]),
+  foundedYear: int("foundedYear"),
+  // Contact information
+  website: varchar("website", { length: 500 }),
+  phone: varchar("phone", { length: 50 }),
+  address: text("address"),
+  city: varchar("city", { length: 100 }),
+  postalCode: varchar("postalCode", { length: 10 }),
+  country: varchar("country", { length: 100 }).default("France"),
+  // User role in company
+  firstName: varchar("firstName", { length: 100 }).notNull(),
+  lastName: varchar("lastName", { length: 100 }).notNull(),
+  jobTitle: varchar("jobTitle", { length: 150 }).notNull(),
+  department: varchar("department", { length: 100 }),
+  seniority: mysqlEnum("seniority", ["<1year", "1-3years", "3-5years", "5-10years", "10+years"]),
+  isDecisionMaker: boolean("isDecisionMaker").default(false).notNull(),
+  decisionLevel: mysqlEnum("decisionLevel", ["final", "influencer", "recommender", "user"]),
+  // Additional context
+  companyDescription: text("companyDescription"),
+  mainProducts: text("mainProducts"),
+  targetMarket: text("targetMarket"),
+  competitors: json("competitors").$type<string[]>(),
+  // Verification
+  emailVerified: boolean("emailVerified").default(false).notNull(),
+  verificationToken: varchar("verificationToken", { length: 255 }),
+  verifiedAt: timestamp("verifiedAt"),
+  // Onboarding completion
+  onboardingCompleted: boolean("onboardingCompleted").default(false).notNull(),
+  onboardingStep: int("onboardingStep").default(1),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ClientProfile = typeof clientProfiles.$inferSelect;
+export type InsertClientProfile = typeof clientProfiles.$inferInsert;
+
+/**
+ * CDC Templates table - customizable templates for consultants
+ */
+export const cdcTemplates = mysqlTable("cdc_templates", {
+  id: int("id").autoincrement().primaryKey(),
+  consultantId: int("consultantId").notNull().references(() => users.id),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  category: mysqlEnum("category", ["web", "mobile", "ecommerce", "saas", "custom"]).notNull(),
+  // Template structure
+  sections: json("sections").$type<Array<{
+    id: string;
+    title: string;
+    content: string;
+    order: number;
+    required: boolean;
+    variables: string[]; // e.g., ["{{client_name}}", "{{budget}}"]
+  }>>().notNull(),
+  // Metadata
+  isDefault: boolean("isDefault").default(false),
+  isPublic: boolean("isPublic").default(false), // Can be shared with other consultants
+  usageCount: int("usageCount").default(0),
+  tags: json("tags").$type<string[]>(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type CdcTemplate = typeof cdcTemplates.$inferSelect;
+export type InsertCdcTemplate = typeof cdcTemplates.$inferInsert;
+
+/**
+ * Template sections library - reusable sections for building templates
+ */
+export const templateSections = mysqlTable("template_sections", {
+  id: int("id").autoincrement().primaryKey(),
+  consultantId: int("consultantId").references(() => users.id), // null = system/public section
+  title: varchar("title", { length: 255 }).notNull(),
+  content: text("content").notNull(),
+  category: varchar("category", { length: 100 }).notNull(), // "introduction", "objectives", "technical", etc.
+  variables: json("variables").$type<string[]>(), // Available variables in this section
+  isPublic: boolean("isPublic").default(false),
+  usageCount: int("usageCount").default(0),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type TemplateSection = typeof templateSections.$inferSelect;
+export type InsertTemplateSection = typeof templateSections.$inferInsert;

@@ -24,6 +24,12 @@ import {
   getConsultantStats,
 } from "./db";
 import {
+  createClientProfile,
+  getClientProfileByUserId,
+  updateClientProfile,
+  hasCompletedOnboarding,
+} from "./clientProfileDb";
+import {
   createCompany,
   getAllCompanies,
   getCompanyById,
@@ -79,6 +85,87 @@ export const appRouter = router({
       const cookieOptions = getSessionCookieOptions(ctx.req);
       ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
       return { success: true } as const;
+    }),
+  }),
+
+  // ============ CLIENT PROFILE ROUTES ============
+  clientProfile: router({
+    create: protectedProcedure
+      .input(z.object({
+        siret: z.string().optional(),
+        siren: z.string().optional(),
+        companyName: z.string().min(1),
+        legalForm: z.string().optional(),
+        sector: z.string().optional(),
+        subSector: z.string().optional(),
+        employeeCount: z.enum(["1", "2-10", "11-50", "51-200", "201-500", "500+"]).optional(),
+        annualRevenue: z.enum(["<100k", "100k-500k", "500k-1M", "1M-5M", "5M-10M", "10M+"]).optional(),
+        foundedYear: z.number().optional(),
+        website: z.string().optional(),
+        phone: z.string().optional(),
+        address: z.string().optional(),
+        city: z.string().optional(),
+        postalCode: z.string().optional(),
+        country: z.string().optional(),
+        firstName: z.string().min(1),
+        lastName: z.string().min(1),
+        jobTitle: z.string().min(1),
+        department: z.string().optional(),
+        seniority: z.enum(["<1year", "1-3years", "3-5years", "5-10years", "10+years"]).optional(),
+        isDecisionMaker: z.boolean().optional(),
+        decisionLevel: z.enum(["final", "influencer", "recommender", "user"]).optional(),
+        companyDescription: z.string().optional(),
+        mainProducts: z.string().optional(),
+        targetMarket: z.string().optional(),
+        competitors: z.array(z.string()).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const profile = await createClientProfile({
+          userId: ctx.user.id,
+          ...input,
+        });
+        return profile;
+      }),
+
+    get: protectedProcedure.query(async ({ ctx }) => {
+      return await getClientProfileByUserId(ctx.user.id);
+    }),
+
+    update: protectedProcedure
+      .input(z.object({
+        siret: z.string().optional(),
+        siren: z.string().optional(),
+        companyName: z.string().optional(),
+        legalForm: z.string().optional(),
+        sector: z.string().optional(),
+        subSector: z.string().optional(),
+        employeeCount: z.enum(["1", "2-10", "11-50", "51-200", "201-500", "500+"]).optional(),
+        annualRevenue: z.enum(["<100k", "100k-500k", "500k-1M", "1M-5M", "5M-10M", "10M+"]).optional(),
+        foundedYear: z.number().optional(),
+        website: z.string().optional(),
+        phone: z.string().optional(),
+        address: z.string().optional(),
+        city: z.string().optional(),
+        postalCode: z.string().optional(),
+        country: z.string().optional(),
+        firstName: z.string().optional(),
+        lastName: z.string().optional(),
+        jobTitle: z.string().optional(),
+        department: z.string().optional(),
+        seniority: z.enum(["<1year", "1-3years", "3-5years", "5-10years", "10+years"]).optional(),
+        isDecisionMaker: z.boolean().optional(),
+        decisionLevel: z.enum(["final", "influencer", "recommender", "user"]).optional(),
+        companyDescription: z.string().optional(),
+        mainProducts: z.string().optional(),
+        targetMarket: z.string().optional(),
+        competitors: z.array(z.string()).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        return await updateClientProfile(ctx.user.id, input);
+      }),
+
+    hasCompleted: protectedProcedure.query(async ({ ctx }) => {
+      return await hasCompletedOnboarding(ctx.user.id);
     }),
   }),
 
