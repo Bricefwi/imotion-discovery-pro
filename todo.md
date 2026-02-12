@@ -137,3 +137,35 @@
 - [ ] Ajouter les boutons "Télécharger CDC (Word)"
 - [ ] Ajouter les boutons "Télécharger Contrat (PDF/Word)"
 - [ ] Afficher l'historique des documents générés
+
+
+## REDESIGN COMPLET - STYLE FRAMER MODERNE
+
+### Recherche d'Images
+- [x] Rechercher des images professionnelles pour la transformation digitale
+- [x] Trouver des visuels IA et innovation
+- [x] Sélectionner des photos de collaboration et consultation
+- [x] Télécharger et optimiser les images
+
+### Composants Animés Framer Motion
+- [x] Installer Framer Motion
+- [x] Créer des animations de révélation de texte
+- [x] Implémenter des cartes avec effet hover 3D
+- [x] Ajouter des scroll-triggered animations
+- [x] Créer des boutons avec effet magnetic hover
+- [x] Implémenter des transitions de page fluides
+
+### Page d'Accueil Redesignée
+- [x] Hero section avec animation moderne
+- [x] Timeline interactive des 7 phases
+- [x] Section "Ce que vous obtenez" avec visuels
+- [x] Statistiques animées
+- [x] Footer repensé
+- [x] CTA final avec background pattern
+
+### Interfaces Client/Consultant
+- [ ] Dashboard consultant avec micro-interactions
+- [ ] Vue Kanban avec animations drag & drop fluides
+- [ ] Analytics avec graphiques animés
+- [ ] Interface conversationnelle repensée
+- [ ] Composants UI personnalisés (pas de copie Shadcn)
