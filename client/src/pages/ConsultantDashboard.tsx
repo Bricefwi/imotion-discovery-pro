@@ -14,14 +14,37 @@ import {
   Kanban,
 } from "lucide-react";
 import { useLocation } from "wouter";
+import { useWebSocketEvent } from "@/hooks/useWebSocket";
+import { useEffect, useState } from "react";
 
 export default function ConsultantDashboard() {
   const { user, logout } = useAuth();
   const [, setLocation] = useLocation();
 
-  const { data: projects, isLoading: projectsLoading } = trpc.projects.list.useQuery();
-  const { data: stats, isLoading: statsLoading } = trpc.projects.stats.useQuery();
-  const { data: consultantStats } = trpc.notifications.stats.useQuery();
+  const { data: projects, isLoading: projectsLoading, refetch: refetchProjects } = trpc.projects.list.useQuery();
+  const { data: stats, isLoading: statsLoading, refetch: refetchStats } = trpc.projects.stats.useQuery();
+  const { data: consultantStats, refetch: refetchConsultantStats } = trpc.notifications.stats.useQuery();
+  const [realtimeNotification, setRealtimeNotification] = useState<string | null>(null);
+
+  // Listen to WebSocket events
+  useWebSocketEvent('project:created', (data: any) => {
+    setRealtimeNotification(`🆕 Nouveau projet : ${data.title}`);
+    refetchProjects();
+    refetchStats();
+    setTimeout(() => setRealtimeNotification(null), 5000);
+  });
+
+  useWebSocketEvent('project:updated', (data: any) => {
+    refetchProjects();
+    refetchStats();
+  });
+
+  useWebSocketEvent('message:new', (data: any) => {
+    setRealtimeNotification(`💬 Nouveau message sur : ${data.project.title}`);
+    refetchProjects();
+    refetchConsultantStats();
+    setTimeout(() => setRealtimeNotification(null), 5000);
+  });
 
   const getPhaseLabel = (phase: number) => {
     const phases = [
@@ -64,6 +87,13 @@ export default function ConsultantDashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      {/* Realtime Notification Banner */}
+      {realtimeNotification && (
+        <div className="bg-gradient-to-r from-[#d8232a] to-[#ff4d54] text-white px-4 py-3 text-center font-medium animate-pulse">
+          {realtimeNotification}
+        </div>
+      )}
+      
       {/* Header */}
       <header className="bg-white shadow-sm">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">

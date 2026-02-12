@@ -11,14 +11,26 @@ import ConsultantDashboard from "./pages/ConsultantDashboard";
 import ConsultantPipeline from "./pages/ConsultantPipeline";
 import ConsultantAnalytics from "./pages/ConsultantAnalytics";
 import ConsultantProjectDetail from "./pages/ConsultantProjectDetail";
+import ClientOnboarding from "./pages/ClientOnboarding";
+import VerifyEmail from "./pages/VerifyEmail";
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import { OnboardingGuard } from "./components/OnboardingGuard";
+import { EmailVerificationGuard } from "./components/EmailVerificationGuard";
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={ClientWelcome} />
       
+      {/* Email Verification (Public) */}
+      <Route path="/verify-email/:token" component={VerifyEmail} />
+      
       {/* Client Routes */}
+      <Route path="/client/onboarding">
+        <ProtectedRoute requiredRole="client" redirectTo="/">
+          <ClientOnboarding />
+        </ProtectedRoute>
+      </Route>
       <Route path="/client/projects">
         <ProtectedRoute requiredRole="client" redirectTo="/">
           <ClientProjects />
@@ -65,7 +77,11 @@ function App() {
       <ThemeProvider defaultTheme="light">
         <TooltipProvider>
           <Toaster />
-          <Router />
+          <EmailVerificationGuard>
+            <OnboardingGuard>
+              <Router />
+            </OnboardingGuard>
+          </EmailVerificationGuard>
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>

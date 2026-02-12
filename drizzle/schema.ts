@@ -347,3 +347,19 @@ export const templateSections = mysqlTable("template_sections", {
 
 export type TemplateSection = typeof templateSections.$inferSelect;
 export type InsertTemplateSection = typeof templateSections.$inferInsert;
+
+/**
+ * Email Verifications table - stores email verification tokens
+ */
+export const emailVerifications = mysqlTable("email_verifications", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id),
+  email: varchar("email", { length: 320 }).notNull(),
+  token: varchar("token", { length: 255 }).notNull().unique(),
+  expiresAt: timestamp("expiresAt").notNull(),
+  verifiedAt: timestamp("verifiedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type EmailVerification = typeof emailVerifications.$inferSelect;
+export type InsertEmailVerification = typeof emailVerifications.$inferInsert;

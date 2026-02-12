@@ -225,3 +225,49 @@
 - [ ] Ajouter les variables dynamiques ({{client_name}}, {{budget}}, etc.)
 - [ ] Permettre la sauvegarde et réutilisation des templates
 - [ ] Implémenter la sélection de template lors de la génération de CDC
+
+
+## FINALISATION - ONBOARDING, EMAIL ET TEMPS RÉEL
+
+### Route Onboarding et Redirection
+- [x] Ajouter la route /client/onboarding dans App.tsx
+- [x] Créer un middleware de vérification du profil client (OnboardingGuard)
+- [x] Rediriger automatiquement les nouveaux clients vers l'onboarding
+- [x] Empêcher l'accès aux autres pages tant que l'onboarding n'est pas complété
+
+### Validation Email
+- [ ] Créer la table email_verifications pour stocker les tokens
+- [ ] Générer un token de vérification unique à l'inscription
+- [ ] Envoyer un email de confirmation avec lien de validation
+- [ ] Créer la page de confirmation email (/verify-email/:token)
+- [ ] Bloquer l'accès complet tant que l'email n'est pas vérifié
+- [ ] Ajouter un bouton "Renvoyer l'email de confirmation"
+
+### Tableau de Bord Temps Réel (WebSocket)
+- [x] Installer socket.io et socket.io-client
+- [x] Configurer le serveur WebSocket dans server/_core/index.ts
+- [x] Créer les événements : project:created, project:updated, message:new
+- [x] Implémenter la connexion WebSocket côté client
+- [x] Mettre à jour le dashboard consultant en temps réel
+- [x] Ajouter des notifications toast pour les événements temps réel
+
+
+## FINALISATION COMPLÈTE - PATRICE SIMION (Admin)
+
+### Attribution Rôle Admin
+- [x] Créer le script pour attribuer le rôle admin à patrice.simion@gmail.com (Mob: 0786976888)
+- [x] Vérifier l'attribution automatique via OWNER_OPEN_ID
+
+### Validation Email avec SendGrid (Priorité 1)
+- [x] Créer les routes tRPC pour la gestion des tokens de vérification
+- [x] Implémenter l'envoi d'email de confirmation avec SendGrid
+- [x] Créer la page de vérification email (/verify-email/:token)
+- [x] Bloquer l'accès tant que l'email n'est pas vérifié (EmailVerificationGuard)
+- [x] Ajouter un bouton "Renvoyer l'email de confirmation" dans l'interface
+
+### Templates CDC Personnalisables (Priorité 2)
+- [ ] Créer l'interface d'édition de templates pour consultants
+- [ ] Implémenter les variables dynamiques ({{client_name}}, {{budget}}, etc.)
+- [ ] Créer la bibliothèque de sections modulaires
+- [ ] Permettre la sauvegarde et réutilisation des templates
+- [ ] Implémenter la sélection de template lors de la génération de CDC

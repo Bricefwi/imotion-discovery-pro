@@ -30,6 +30,14 @@ import {
   hasCompletedOnboarding,
 } from "./clientProfileDb";
 import {
+  createEmailVerification,
+  getVerificationByToken,
+  markEmailAsVerified,
+  isEmailVerified,
+  getPendingVerification,
+} from "./emailVerificationDb";
+import { sendEmailVerification } from "./emailService";
+import {
   createCompany,
   getAllCompanies,
   getCompanyById,
@@ -85,6 +93,61 @@ export const appRouter = router({
       const cookieOptions = getSessionCookieOptions(ctx.req);
       ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
       return { success: true } as const;
+    }),
+    
+    // Email verification status
+    isEmailVerified: protectedProcedure.query(async ({ ctx }) => {
+      return isEmailVerified(ctx.user.id);
+    }),
+    
+    // Send or resend verification email
+    sendVerificationEmail: protectedProcedure.mutation(async ({ ctx }) => {
+      if (!ctx.user.email) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'No email address associated with this account'
+        });
+      }
+      
+      // Create verification record
+      const verification = await createEmailVerification(ctx.user.id, ctx.user.email);
+      
+      // Send email
+      const sent = await sendEmailVerification(
+        ctx.user.email,
+        ctx.user.name,
+        verification.token
+      );
+      
+      if (!sent) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to send verification email'
+        });
+      }
+      
+      return { success: true, message: 'Verification email sent' };
+    }),
+    
+    // Verify email with token
+    verifyEmail: publicProcedure
+      .input(z.object({ token: z.string() }))
+      .mutation(async ({ input }) => {
+        const verification = await markEmailAsVerified(input.token);
+        
+        if (!verification) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: 'Invalid or expired verification token'
+          });
+        }
+        
+        return { success: true, message: 'Email verified successfully' };
+      }),
+    
+    // Get pending verification info
+    getPendingVerification: protectedProcedure.query(async ({ ctx }) => {
+      return getPendingVerification(ctx.user.id);
     }),
   }),
 

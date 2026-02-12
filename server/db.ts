@@ -1,5 +1,6 @@
 import { eq, desc, and, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
+import { emitToConsultants, emitToUser } from "./websocket";
 import { 
   InsertUser, users, 
   projects, InsertProject, Project,
@@ -106,6 +107,10 @@ export async function createProject(project: InsertProject): Promise<Project> {
   const insertedId = Number(result[0].insertId);
   
   const inserted = await db.select().from(projects).where(eq(projects.id, insertedId)).limit(1);
+  
+  // Emit WebSocket event to consultants
+  emitToConsultants('project:created', inserted[0]);
+  
   return inserted[0]!;
 }
 
@@ -147,6 +152,14 @@ export async function updateProject(id: number, updates: Partial<InsertProject>)
   if (!db) throw new Error("Database not available");
 
   await db.update(projects).set(updates).where(eq(projects.id, id));
+  
+  // Get updated project and emit WebSocket event
+  const updated = await db.select().from(projects).where(eq(projects.id, id)).limit(1);
+  if (updated[0]) {
+    emitToConsultants('project:updated', updated[0]);
+    // Also notify the client who owns this project
+    emitToUser(updated[0].clientId, 'project:updated', updated[0]);
+  }
 }
 
 // ============ MESSAGE QUERIES ============
@@ -159,6 +172,17 @@ export async function createMessage(message: InsertMessage): Promise<Message> {
   const insertedId = Number(result[0].insertId);
   
   const inserted = await db.select().from(messages).where(eq(messages.id, insertedId)).limit(1);
+  
+  // Emit WebSocket event for new message
+  // Get project to know who to notify
+  const project = await db.select().from(projects).where(eq(projects.id, message.projectId)).limit(1);
+  if (project[0]) {
+    // Notify consultants
+    emitToConsultants('message:new', { message: inserted[0], project: project[0] });
+    // Notify the client
+    emitToUser(project[0].clientId, 'message:new', { message: inserted[0], project: project[0] });
+  }
+  
   return inserted[0]!;
 }
 

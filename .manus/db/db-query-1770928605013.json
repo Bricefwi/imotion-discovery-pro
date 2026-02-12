@@ -1,0 +1,16 @@
+{
+  "query": "-- Vérifier si l'utilisateur existe et son rôle actuel\nSELECT id, email, name, role FROM users WHERE email = 'patrice.simion@gmail.com';\n\n-- Mettre à jour le rôle en admin\nUPDATE users \nSET role = 'admin', \n    name = 'Patrice Simion',\n    updatedAt = CURRENT_TIMESTAMP\nWHERE email = 'patrice.simion@gmail.com';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3aGpTUHh1RaZFaW.root --database 3vaZJ9txrdLVJAaMV5dBkb --execute -- Vérifier si l'utilisateur existe et son rôle actuel\nSELECT id, email, name, role FROM users WHERE email = 'patrice.simion@gmail.com';\n\n-- Mettre à jour le rôle en admin\nUPDATE users \nSET role = 'admin', \n    name = 'Patrice Simion',\n    updatedAt = CURRENT_TIMESTAMP\nWHERE email = 'patrice.simion@gmail.com';",
+  "rows": [
+    {
+      "id": "1",
+      "email": "patrice.simion@gmail.com",
+      "name": "Patrice SIMION",
+      "role": "admin"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\temail\tname\trole\n1\tpatrice.simion@gmail.com\tPatrice SIMION\tadmin\n",
+  "stderr": "",
+  "execution_time_ms": 63
+}

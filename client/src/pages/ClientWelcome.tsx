@@ -172,8 +172,8 @@ export default function ClientWelcome() {
             >
               <div className="absolute inset-0 bg-gradient-to-r from-[#d8232a] to-[#ff4d54] rounded-3xl blur-3xl opacity-20" />
               <img 
-                src="/images/hero-meeting.jpg" 
-                alt="Consultation IA" 
+                src="/hero-diverse-team.jpg" 
+                alt="Équipe collaborative en transformation digitale" 
                 className="relative rounded-3xl shadow-2xl w-full h-auto object-cover"
               />
             </motion.div>
