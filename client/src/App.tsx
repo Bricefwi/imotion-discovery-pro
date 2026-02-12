@@ -10,6 +10,7 @@ import ClientConversation from "./pages/ClientConversation";
 import ConsultantDashboard from "./pages/ConsultantDashboard";
 import ConsultantPipeline from "./pages/ConsultantPipeline";
 import ConsultantAnalytics from "./pages/ConsultantAnalytics";
+import ConsultantProjectDetail from "./pages/ConsultantProjectDetail";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
 function Router() {
@@ -43,6 +44,11 @@ function Router() {
       <Route path="/consultant/analytics">
         <ProtectedRoute requiredRole="consultant" redirectTo="/">
           <ConsultantAnalytics />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/consultant/project/:id">
+        <ProtectedRoute requiredRole="consultant" redirectTo="/">
+          <ConsultantProjectDetail />
         </ProtectedRoute>
       </Route>
       

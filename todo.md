@@ -169,3 +169,26 @@
 - [ ] Analytics avec graphiques animés
 - [ ] Interface conversationnelle repensée
 - [ ] Composants UI personnalisés (pas de copie Shadcn)
+
+
+## FINALISATION - TÉLÉCHARGEMENT, EMAILS & CRON
+
+### Téléchargement de Documents
+- [x] Créer la page détaillée de projet consultant (/consultant/project/:id)
+- [x] Ajouter les boutons "Télécharger CDC (PDF)" et "Télécharger CDC (Word)"
+- [x] Ajouter les boutons "Télécharger Contrat (PDF)" et "Télécharger Contrat (Word)"
+- [x] Afficher la liste des documents générés avec dates et statuts
+- [x] Implémenter le téléchargement direct depuis S3
+
+### Intégration SendGrid
+- [x] Installer @sendgrid/mail
+- [x] Configurer la clé API SendGrid dans les secrets
+- [x] Créer les templates d'emails (relance client, notification consultant)
+- [x] Implémenter l'envoi d'email dans cronJobs.ts
+- [ ] Tester l'envoi d'emails de relance (nécessite clé API SendGrid)
+
+### Vercel Cron Configuration
+- [x] Créer le fichier vercel.json avec configuration cron
+- [x] Configurer l'endpoint /api/cron/execute
+- [x] Ajouter l'endpoint de test /api/cron/test
+- [x] Documenter la configuration pour le déploiement (CRON_SETUP.md)

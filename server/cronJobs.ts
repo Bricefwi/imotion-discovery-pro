@@ -2,6 +2,7 @@ import { eq, and, lt, isNull, sql } from "drizzle-orm";
 import { getDb } from "./db";
 import { projects, reminders, cronJobs, users } from "../drizzle/schema";
 import { notifyOwner } from "./_core/notification";
+import { sendProjectIncompleteReminder, sendQuoteFollowupReminder, sendConsultantNotification } from './emailService';
 
 /**
  * Cron job system for automated reminders and notifications
@@ -294,11 +295,22 @@ async function sendScheduledReminders() {
         .limit(1);
 
       if (client[0]?.email && reminder.emailSubject && reminder.emailBody) {
-        // TODO: Integrate with actual email service (SendGrid, AWS SES, etc.)
-        // For now, just log and mark as sent
-        console.log(`[EMAIL] To: ${client[0].email}`);
+        // Send email via SendGrid
+        console.log(`[EMAIL] Sending to: ${client[0].email}`);
         console.log(`[EMAIL] Subject: ${reminder.emailSubject}`);
-        console.log(`[EMAIL] Body: ${reminder.emailBody}`);
+        
+        // Determine which email template to use based on reminder type
+        let emailSent = false;
+        if (reminder.type === 'incomplete_project' || reminder.type === 'no_response') {
+          emailSent = await sendProjectIncompleteReminder(client[0].email, project[0].title, project[0].id);
+        } else if (reminder.type === 'quote_followup') {
+          const daysSince = Math.floor((now.getTime() - project[0].updatedAt.getTime()) / (1000 * 60 * 60 * 24));
+          emailSent = await sendQuoteFollowupReminder(client[0].email, project[0].title, project[0].id, daysSince);
+        }
+        
+        if (!emailSent) {
+          console.warn(`[EMAIL] Failed to send email to ${client[0].email}`);
+        }
 
         // Mark as sent
         await db

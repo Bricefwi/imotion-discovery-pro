@@ -583,6 +583,31 @@ export const appRouter = router({
       }),
   }),
 
+  // ============ CONSULTANT ROUTES ============
+  consultant: router({ addNote: consultantProcedure
+      .input(z.object({
+        projectId: z.number(),
+        content: z.string().min(1),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        return createConsultantNote({
+          projectId: input.projectId,
+          consultantId: ctx.user.id,
+          content: input.content,
+        });
+      }),
+
+    getNotes: consultantProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ input }) => {
+        return getNotesByProjectId(input.projectId);
+      }),
+
+    stats: consultantProcedure.query(async ({ ctx }) => {
+      return getConsultantStats(ctx.user.id);
+    }),
+  }),
+
   // ============ CRM ROUTES ============
   crm: router({
     // Companies
