@@ -47,6 +47,21 @@ import {
   incrementSectionUsage,
 } from "./cdcTemplatesDb";
 import {
+  createQuoteAcceptance,
+  markAcknowledgmentSent,
+  getQuoteAcceptance,
+  createPaymentPhases,
+  getPaymentPhases,
+  markPhaseAsPaid,
+  linkPhaseToInvoice,
+  createReceptionReport,
+  addReceptionItem,
+  updateReceptionItemStatus,
+  getReceptionReport,
+  signReceptionReport,
+  calculateGlobalStatus,
+} from "./paymentSystemDb";
+import {
   createQuote,
   getQuoteById,
   listQuotesByProject,
@@ -1296,6 +1311,178 @@ export const appRouter = router({
       .mutation(async ({ input }) => {
         await deleteQuote(input.id);
         return { success: true };
+      }),
+  }),
+
+  /**
+   * SYSTÈME DE PAIEMENT 30-30-30-10
+   */
+  payment: router({
+    // Accepter un devis avec validation CGU/CGV
+    acceptQuote: protectedProcedure
+      .input(
+        z.object({
+          quoteId: z.number(),
+          cguAccepted: z.boolean(),
+          cgvAccepted: z.boolean(),
+          cguVersion: z.string().default("1.0"),
+          cgvVersion: z.string().default("1.0"),
+        })
+      )
+      .mutation(async ({ input, ctx }) => {
+        if (!input.cguAccepted || !input.cgvAccepted) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Vous devez accepter les CGU et CGV pour valider le devis",
+          });
+        }
+
+        // Récupérer l'IP et user-agent depuis le contexte
+        const ipAddress = ctx.req?.ip || ctx.req?.socket?.remoteAddress;
+        const userAgent = ctx.req?.headers["user-agent"];
+
+        // Créer l'acceptation avec traçabilité
+        const acceptance = await createQuoteAcceptance({
+          quoteId: input.quoteId,
+          userId: ctx.user.id,
+          ipAddress,
+          userAgent,
+          cguVersion: input.cguVersion,
+          cgvVersion: input.cgvVersion,
+        });
+
+        // Mettre à jour le statut du devis
+        await updateQuoteStatus(input.quoteId, "accepted", ctx.user.id);
+
+        // Créer les 4 phases de paiement
+        const quote = await getQuoteById(input.quoteId);
+        if (quote) {
+          await createPaymentPhases(input.quoteId, parseFloat(quote.totalTtc));
+        }
+
+        // TODO: Générer et envoyer l'accusé de réception par email
+
+        return { success: true, acceptanceId: acceptance.insertId };
+      }),
+
+    // Récupérer les phases de paiement d'un devis
+    getPhases: protectedProcedure
+      .input(z.object({ quoteId: z.number() }))
+      .query(async ({ input }) => {
+        return await getPaymentPhases(input.quoteId);
+      }),
+
+    // Marquer une phase comme payée (consultant uniquement)
+    markPhasePaid: consultantProcedure
+      .input(
+        z.object({
+          phaseId: z.number(),
+          paymentMethod: z.string(),
+          paymentReference: z.string(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        await markPhaseAsPaid(input.phaseId, input.paymentMethod, input.paymentReference);
+        return { success: true };
+      }),
+
+    // Récupérer l'acceptation d'un devis
+    getAcceptance: protectedProcedure
+      .input(z.object({ quoteId: z.number() }))
+      .query(async ({ input }) => {
+        return await getQuoteAcceptance(input.quoteId);
+      }),
+  }),
+
+  /**
+   * PROCÈS-VERBAL DE RECETTE CLIENT
+   */
+  reception: router({
+    // Créer un PV de recette
+    create: consultantProcedure
+      .input(
+        z.object({
+          quoteId: z.number(),
+          projectId: z.number().optional(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        const report = await createReceptionReport({
+          quoteId: input.quoteId,
+          projectId: input.projectId,
+        });
+        return { reportId: report.insertId };
+      }),
+
+    // Ajouter une ligne de validation au PV
+    addItem: consultantProcedure
+      .input(
+        z.object({
+          reportId: z.number(),
+          functionality: z.string(),
+          specification: z.string(),
+          orderIndex: z.number().optional(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        await addReceptionItem(input);
+        return { success: true };
+      }),
+
+    // Mettre à jour le statut d'une ligne
+    updateItemStatus: protectedProcedure
+      .input(
+        z.object({
+          itemId: z.number(),
+          status: z.enum(["conforme", "reserve", "non_conforme"]),
+          comments: z.string().optional(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        await updateReceptionItemStatus(input.itemId, input.status, input.comments);
+        return { success: true };
+      }),
+
+    // Récupérer un PV de recette avec ses lignes
+    get: protectedProcedure
+      .input(z.object({ reportId: z.number() }))
+      .query(async ({ input }) => {
+        return await getReceptionReport(input.reportId);
+      }),
+
+    // Signer le PV de recette
+    sign: protectedProcedure
+      .input(
+        z.object({
+          reportId: z.number(),
+          role: z.enum(["client", "consultant"]),
+          signature: z.string(), // Base64 ou hash
+        })
+      )
+      .mutation(async ({ input, ctx }) => {
+        const isValidated = await signReceptionReport(
+          input.reportId,
+          input.role,
+          input.signature
+        );
+
+        if (isValidated) {
+          // Calculer le statut global
+          await calculateGlobalStatus(input.reportId);
+
+          // TODO: Déclencher le paiement de la Phase 4 (10%)
+          // TODO: Générer le PDF du PV de recette
+        }
+
+        return { success: true, validated: isValidated };
+      }),
+
+    // Calculer le statut global du PV
+    calculateStatus: consultantProcedure
+      .input(z.object({ reportId: z.number() }))
+      .mutation(async ({ input }) => {
+        const globalStatus = await calculateGlobalStatus(input.reportId);
+        return { globalStatus };
       }),
   }),
 

@@ -456,3 +456,89 @@ export const invoices = mysqlTable("invoices", {
 
 export type Invoice = typeof invoices.$inferSelect;
 export type InsertInvoice = typeof invoices.$inferInsert;
+
+
+/**
+ * Quote Acceptances - Traçabilité validation CGU/CGV
+ */
+export const quoteAcceptances = mysqlTable("quote_acceptances", {
+  id: int("id").autoincrement().primaryKey(),
+  quoteId: int("quoteId").notNull().references(() => quotes.id),
+  userId: int("userId").notNull().references(() => users.id),
+  acceptedAt: timestamp("acceptedAt").defaultNow().notNull(),
+  ipAddress: varchar("ipAddress", { length: 45 }), // IPv6 support
+  userAgent: text("userAgent"),
+  cguVersion: varchar("cguVersion", { length: 20 }).notNull(), // Version des CGU acceptées
+  cgvVersion: varchar("cgvVersion", { length: 20 }).notNull(), // Version des CGV acceptées
+  acknowledgmentSent: boolean("acknowledgmentSent").default(false), // Accusé de réception envoyé
+  acknowledgmentPdfUrl: text("acknowledgmentPdfUrl"), // URL du PDF d'accusé
+});
+
+export type QuoteAcceptance = typeof quoteAcceptances.$inferSelect;
+export type InsertQuoteAcceptance = typeof quoteAcceptances.$inferInsert;
+
+/**
+ * Payment Phases - Paiement échelonné 30-30-30-10
+ */
+export const paymentPhases = mysqlTable("payment_phases", {
+  id: int("id").autoincrement().primaryKey(),
+  quoteId: int("quoteId").notNull().references(() => quotes.id),
+  phaseNumber: int("phaseNumber").notNull(), // 1, 2, 3, 4
+  phaseName: varchar("phaseName", { length: 100 }).notNull(), // "Acompte", "Avancement", "Pré-livraison", "Solde"
+  percentage: int("percentage").notNull(), // 30, 30, 30, 10
+  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+  status: mysqlEnum("status", ["pending", "paid", "overdue", "cancelled"]).default("pending").notNull(),
+  dueDate: timestamp("dueDate").notNull(),
+  paidAt: timestamp("paidAt"),
+  paymentMethod: varchar("paymentMethod", { length: 50 }),
+  paymentReference: varchar("paymentReference", { length: 255 }),
+  invoiceId: int("invoiceId").references(() => invoices.id), // Lien vers la facture générée
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PaymentPhase = typeof paymentPhases.$inferSelect;
+export type InsertPaymentPhase = typeof paymentPhases.$inferInsert;
+
+/**
+ * Reception Reports - Procès-verbaux de recette client
+ */
+export const receptionReports = mysqlTable("reception_reports", {
+  id: int("id").autoincrement().primaryKey(),
+  quoteId: int("quoteId").notNull().references(() => quotes.id),
+  projectId: int("projectId").references(() => projects.id),
+  generatedAt: timestamp("generatedAt").defaultNow().notNull(),
+  validatedAt: timestamp("validatedAt"),
+  clientSignature: text("clientSignature"), // Signature électronique (base64 ou hash)
+  clientSignedAt: timestamp("clientSignedAt"),
+  consultantSignature: text("consultantSignature"),
+  consultantSignedAt: timestamp("consultantSignedAt"),
+  status: mysqlEnum("status", ["draft", "pending_validation", "validated", "rejected"]).default("draft").notNull(),
+  globalStatus: mysqlEnum("globalStatus", ["conforme", "reserve", "non_conforme"]).default("conforme"),
+  clientComments: text("clientComments"),
+  consultantComments: text("consultantComments"),
+  pdfUrl: text("pdfUrl"), // URL du PDF du PV
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ReceptionReport = typeof receptionReports.$inferSelect;
+export type InsertReceptionReport = typeof receptionReports.$inferInsert;
+
+/**
+ * Reception Items - Lignes de validation du PV de recette
+ */
+export const receptionItems = mysqlTable("reception_items", {
+  id: int("id").autoincrement().primaryKey(),
+  reportId: int("reportId").notNull().references(() => receptionReports.id),
+  functionality: varchar("functionality", { length: 255 }).notNull(), // Nom de la fonctionnalité
+  specification: text("specification").notNull(), // Spécification attendue
+  status: mysqlEnum("status", ["conforme", "reserve", "non_conforme"]).default("conforme").notNull(),
+  comments: text("comments"), // Commentaires client/consultant
+  orderIndex: int("orderIndex").default(0), // Ordre d'affichage
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ReceptionItem = typeof receptionItems.$inferSelect;
+export type InsertReceptionItem = typeof receptionItems.$inferInsert;

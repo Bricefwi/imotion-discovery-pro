@@ -488,3 +488,53 @@
 - [ ] Vérifier pourquoi le logo n'est pas visible
 - [ ] Corriger le chemin ou la taille du logo
 - [ ] Tester l'affichage sur toutes les pages
+
+
+## SYSTÈME COMMERCIAL COMPLET 30-30-30-10
+
+### Validation CGU/CGV avec Traçabilité
+- [x] Créer la table `quote_acceptances` (quote_id, user_id, accepted_at, ip_address, user_agent, cgu_version, cgv_version)
+- [ ] Ajouter checkbox CGU + CGV obligatoire sur la page de validation devis
+- [ ] Enregistrer l'horodatage complet (date, heure, minute, IP, user-agent)
+- [ ] Générer automatiquement un accusé de réception PDF signé électroniquement
+- [ ] Envoyer email immédiat avec AR au client après acceptation
+
+### Paiement Échelonné 30-30-30-10
+- [x] Créer la table `payment_phases` (quote_id, phase_number, percentage, amount, status, due_date, paid_at)
+- [ ] Implémenter Phase 1 (30%) : Acompte à la signature
+- [ ] Implémenter Phase 2 (30%) : Avancement à mi-parcours (50% fonctionnalités)
+- [ ] Implémenter Phase 3 (30%) : Pré-livraison à 100% développement
+- [ ] Implémenter Phase 4 (10%) : Solde après validation PV de recette
+- [ ] Créer les routes tRPC pour gestion des paiements
+- [ ] Interface consultant pour marquer les phases comme payées
+
+### Procès-Verbal de Recette Client
+- [x] Créer la table `reception_reports` (quote_id, generated_at, validated_at, client_signature, consultant_signature)
+- [x] Créer la table `reception_items` (report_id, functionality, specification, status, comments)
+- [ ] Générer automatiquement le PV depuis le devis accepté
+- [ ] Créer la grille de validation (✅ Conforme / ⚠️ Réserve / ❌ Non conforme)
+- [ ] Implémenter la signature électronique client + consultant
+- [ ] Déclencher automatiquement le paiement Phase 4 après validation
+- [ ] Générer le PDF du PV de recette
+
+### Automatisations CRON Avancées
+
+#### CRON Commerciaux
+- [ ] Expiration automatique des devis après 30 jours
+- [ ] Rappel paiement Phase 2 si retard > 7 jours
+- [ ] Rappel paiement Phase 3 si retard > 7 jours
+- [ ] Rappel paiement Phase 4 si retard > 7 jours
+
+#### CRON Projet
+- [ ] Notification consultant si Phase 2 atteinte (50% fonctionnalités)
+- [ ] Génération automatique PV de recette à 100% développement
+- [ ] Relance client pour validation PV si > 5 jours
+
+#### CRON Facturation
+- [ ] Génération facture automatique après chaque paiement
+- [ ] Relance facture impayée J+7, J+14, J+21
+- [ ] Mise en demeure automatique J+30
+
+#### CRON Reporting
+- [ ] Rapport hebdomadaire consultant (CA, pipeline, projets bloqués)
+- [ ] Rapport mensuel admin (KPIs, trésorerie, prévisions)
