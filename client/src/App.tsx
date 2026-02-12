@@ -17,6 +17,11 @@ import ConsultantTemplateEditor from "./pages/ConsultantTemplateEditor";
 import AdminNotifications from "./pages/AdminNotifications";
 import ClientOnboarding from "./pages/ClientOnboarding";
 import VerifyEmail from "./pages/VerifyEmail";
+import CGU from "./pages/CGU";
+import CGV from "./pages/CGV";
+import MentionsLegales from "./pages/MentionsLegales";
+import Confidentialite from "./pages/Confidentialite";
+import Cookies from "./pages/Cookies";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { OnboardingGuard } from "./components/OnboardingGuard";
 import { EmailVerificationGuard } from "./components/EmailVerificationGuard";
@@ -94,6 +99,13 @@ function Router() {
           <AdminNotifications />
         </ProtectedRoute>
       </Route>
+      
+      {/* Pages Légales (Public) */}
+      <Route path="/cgu" component={CGU} />
+      <Route path="/cgv" component={CGV} />
+      <Route path="/mentions-legales" component={MentionsLegales} />
+      <Route path="/confidentialite" component={Confidentialite} />
+      <Route path="/cookies" component={Cookies} />
       
       {/* Fallback */}
       <Route path="/404" component={NotFound} />
