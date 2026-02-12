@@ -11,6 +11,7 @@ import {
   TrendingUp,
   Clock,
   AlertCircle,
+  Kanban,
 } from "lucide-react";
 import { useLocation } from "wouter";
 
@@ -74,6 +75,20 @@ export default function ConsultantDashboard() {
             </div>
           </div>
           <div className="flex items-center gap-4">
+            <Button
+              variant="outline"
+              onClick={() => setLocation('/consultant/pipeline')}
+            >
+              <Kanban className="w-4 h-4 mr-2" />
+              Pipeline
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setLocation('/consultant/analytics')}
+            >
+              <BarChart3 className="w-4 h-4 mr-2" />
+              Analytics
+            </Button>
             <Button
               variant="outline"
               onClick={() => setLocation('/consultant/notifications')}

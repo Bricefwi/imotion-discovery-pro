@@ -15,6 +15,13 @@
       "when": 1770917746328,
       "tag": "0001_cloudy_lily_hollister",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1770919417179,
+      "tag": "0002_safe_sasquatch",
+      "breakpoints": true
     }
   ]
 }

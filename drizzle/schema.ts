@@ -41,6 +41,15 @@ export const projects = mysqlTable("projects", {
   urgency: mysqlEnum("urgency", ["low", "medium", "high"]).default("medium"),
   budget: varchar("budget", { length: 100 }),
   complexity: mysqlEnum("complexity", ["simple", "medium", "complex"]).default("medium"),
+  // CRM fields
+  companyId: int("companyId").references(() => companies.id),
+  pipelineStage: mysqlEnum("pipelineStage", ["lead", "qualified", "quote_sent", "negotiation", "won", "lost"]).default("lead").notNull(),
+  estimatedValue: decimal("estimatedValue", { precision: 10, scale: 2 }),
+  closingProbability: int("closingProbability").default(50),
+  expectedClosingDate: timestamp("expectedClosingDate"),
+  actualClosingDate: timestamp("actualClosingDate"),
+  lostReason: text("lostReason"),
+  lastContactDate: timestamp("lastContactDate"),
   extractedData: json("extractedData").$type<{
     clientName?: string;
     clientRole?: string;
@@ -146,3 +155,95 @@ export const consultantNotes = mysqlTable("consultant_notes", {
 
 export type ConsultantNote = typeof consultantNotes.$inferSelect;
 export type InsertConsultantNote = typeof consultantNotes.$inferInsert;
+
+/**
+ * Companies table - stores client companies
+ */
+export const companies = mysqlTable("companies", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  sector: varchar("sector", { length: 100 }),
+  size: mysqlEnum("size", ["solo", "small", "medium", "large"]),
+  website: varchar("website", { length: 500 }),
+  address: text("address"),
+  tags: json("tags").$type<string[]>(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Company = typeof companies.$inferSelect;
+export type InsertCompany = typeof companies.$inferInsert;
+
+/**
+ * Contacts table - stores decision makers and stakeholders
+ */
+export const contacts = mysqlTable("contacts", {
+  id: int("id").autoincrement().primaryKey(),
+  companyId: int("companyId").references(() => companies.id, { onDelete: "cascade" }),
+  userId: int("userId").references(() => users.id),
+  firstName: varchar("firstName", { length: 100 }).notNull(),
+  lastName: varchar("lastName", { length: 100 }).notNull(),
+  role: varchar("role", { length: 100 }),
+  email: varchar("email", { length: 320 }),
+  phone: varchar("phone", { length: 50 }),
+  isPrimary: boolean("isPrimary").default(false),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Contact = typeof contacts.$inferSelect;
+export type InsertContact = typeof contacts.$inferInsert;
+
+/**
+ * Activities table - stores all interactions (calls, emails, meetings)
+ */
+export const activities = mysqlTable("activities", {
+  id: int("id").autoincrement().primaryKey(),
+  projectId: int("projectId").references(() => projects.id, { onDelete: "cascade" }),
+  companyId: int("companyId").references(() => companies.id),
+  contactId: int("contactId").references(() => contacts.id),
+  consultantId: int("consultantId").notNull().references(() => users.id),
+  type: mysqlEnum("type", ["call", "email", "meeting", "note", "task"]).notNull(),
+  subject: varchar("subject", { length: 255 }).notNull(),
+  description: text("description"),
+  scheduledAt: timestamp("scheduledAt"),
+  completedAt: timestamp("completedAt"),
+  status: mysqlEnum("status", ["planned", "completed", "cancelled"]).default("planned"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type Activity = typeof activities.$inferSelect;
+export type InsertActivity = typeof activities.$inferInsert;
+
+/**
+ * Reminders table - stores automated and manual reminders
+ */
+export const reminders = mysqlTable("reminders", {
+  id: int("id").autoincrement().primaryKey(),
+  projectId: int("projectId").notNull().references(() => projects.id, { onDelete: "cascade" }),
+  type: mysqlEnum("type", ["incomplete_project", "no_response", "quote_followup", "blocked_project", "manual"]).notNull(),
+  scheduledFor: timestamp("scheduledFor").notNull(),
+  sent: boolean("sent").default(false).notNull(),
+  sentAt: timestamp("sentAt"),
+  emailSubject: varchar("emailSubject", { length: 255 }),
+  emailBody: text("emailBody"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type Reminder = typeof reminders.$inferSelect;
+export type InsertReminder = typeof reminders.$inferInsert;
+
+/**
+ * Cron jobs history table - tracks automated tasks execution
+ */
+export const cronJobs = mysqlTable("cron_jobs", {
+  id: int("id").autoincrement().primaryKey(),
+  jobType: varchar("jobType", { length: 100 }).notNull(),
+  status: mysqlEnum("status", ["success", "failed"]).notNull(),
+  executedAt: timestamp("executedAt").defaultNow().notNull(),
+  details: json("details").$type<Record<string, any>>(),
+  errorMessage: text("errorMessage"),
+});
+
+export type CronJob = typeof cronJobs.$inferSelect;
+export type InsertCronJob = typeof cronJobs.$inferInsert;

@@ -24,6 +24,29 @@ import {
   getConsultantStats,
 } from "./db";
 import {
+  createCompany,
+  getAllCompanies,
+  getCompanyById,
+  updateCompany,
+  createContact,
+  getContactsByCompany,
+  getAllContacts,
+  updateContact,
+  createActivity,
+  getActivitiesByProject,
+  getActivitiesByCompany,
+  getUpcomingActivities,
+  completeActivity,
+  getProjectsByPipelineStage,
+  updateProjectPipeline,
+  getPipelineStats,
+  getMonthlyRevenue,
+  getAverageClosingTime,
+  createReminder,
+  getPendingReminders,
+} from "./crmDb";
+import { executeAllCronJobs } from "./cronJobs";
+import {
   generateConversationResponse,
   generateInitialMessage,
   calculateProjectScore,
@@ -376,6 +399,205 @@ export const appRouter = router({
       .query(async ({ input }) => {
         return getNotesByProjectId(input.projectId);
       }),
+  }),
+
+  // ============ CRM ROUTES ============
+  crm: router({
+    // Companies
+    companies: router({
+      create: consultantProcedure
+        .input(z.object({
+          name: z.string().min(1),
+          sector: z.string().optional(),
+          size: z.enum(["solo", "small", "medium", "large"]).optional(),
+          website: z.string().optional(),
+          address: z.string().optional(),
+          tags: z.array(z.string()).optional(),
+        }))
+        .mutation(async ({ input }) => {
+          return createCompany(input);
+        }),
+
+      list: consultantProcedure.query(async () => {
+        return getAllCompanies();
+      }),
+
+      getById: consultantProcedure
+        .input(z.object({ id: z.number() }))
+        .query(async ({ input }) => {
+          return getCompanyById(input.id);
+        }),
+
+      update: consultantProcedure
+        .input(z.object({
+          id: z.number(),
+          data: z.object({
+            name: z.string().optional(),
+            sector: z.string().optional(),
+            size: z.enum(["solo", "small", "medium", "large"]).optional(),
+            website: z.string().optional(),
+            address: z.string().optional(),
+            tags: z.array(z.string()).optional(),
+          }),
+        }))
+        .mutation(async ({ input }) => {
+          await updateCompany(input.id, input.data);
+          return { success: true };
+        }),
+    }),
+
+    // Contacts
+    contacts: router({
+      create: consultantProcedure
+        .input(z.object({
+          companyId: z.number().optional(),
+          userId: z.number().optional(),
+          firstName: z.string().min(1),
+          lastName: z.string().min(1),
+          role: z.string().optional(),
+          email: z.string().email().optional(),
+          phone: z.string().optional(),
+          isPrimary: z.boolean().optional(),
+        }))
+        .mutation(async ({ input }) => {
+          return createContact(input);
+        }),
+
+      list: consultantProcedure.query(async () => {
+        return getAllContacts();
+      }),
+
+      byCompany: consultantProcedure
+        .input(z.object({ companyId: z.number() }))
+        .query(async ({ input }) => {
+          return getContactsByCompany(input.companyId);
+        }),
+
+      update: consultantProcedure
+        .input(z.object({
+          id: z.number(),
+          data: z.object({
+            firstName: z.string().optional(),
+            lastName: z.string().optional(),
+            role: z.string().optional(),
+            email: z.string().email().optional(),
+            phone: z.string().optional(),
+            isPrimary: z.boolean().optional(),
+          }),
+        }))
+        .mutation(async ({ input }) => {
+          await updateContact(input.id, input.data);
+          return { success: true };
+        }),
+    }),
+
+    // Activities
+    activities: router({
+      create: consultantProcedure
+        .input(z.object({
+          projectId: z.number().optional(),
+          companyId: z.number().optional(),
+          contactId: z.number().optional(),
+          type: z.enum(["call", "email", "meeting", "note", "task"]),
+          subject: z.string().min(1),
+          description: z.string().optional(),
+          scheduledAt: z.date().optional(),
+          status: z.enum(["planned", "completed", "cancelled"]).optional(),
+        }))
+        .mutation(async ({ ctx, input }) => {
+          return createActivity({
+            ...input,
+            consultantId: ctx.user.id,
+          });
+        }),
+
+      byProject: consultantProcedure
+        .input(z.object({ projectId: z.number() }))
+        .query(async ({ input }) => {
+          return getActivitiesByProject(input.projectId);
+        }),
+
+      byCompany: consultantProcedure
+        .input(z.object({ companyId: z.number() }))
+        .query(async ({ input }) => {
+          return getActivitiesByCompany(input.companyId);
+        }),
+
+      upcoming: consultantProcedure
+        .input(z.object({ limit: z.number().optional() }))
+        .query(async ({ ctx, input }) => {
+          return getUpcomingActivities(ctx.user.id, input.limit);
+        }),
+
+      complete: consultantProcedure
+        .input(z.object({ id: z.number() }))
+        .mutation(async ({ input }) => {
+          await completeActivity(input.id);
+          return { success: true };
+        }),
+    }),
+
+    // Pipeline
+    pipeline: router({
+      byStage: consultantProcedure
+        .input(z.object({ stage: z.enum(["lead", "qualified", "quote_sent", "negotiation", "won", "lost"]) }))
+        .query(async ({ input }) => {
+          return getProjectsByPipelineStage(input.stage);
+        }),
+
+      updateStage: consultantProcedure
+        .input(z.object({
+          projectId: z.number(),
+          stage: z.enum(["lead", "qualified", "quote_sent", "negotiation", "won", "lost"]),
+          lostReason: z.string().optional(),
+        }))
+        .mutation(async ({ input }) => {
+          await updateProjectPipeline(input.projectId, input.stage, input.lostReason);
+          return { success: true };
+        }),
+
+      stats: consultantProcedure.query(async () => {
+        return getPipelineStats();
+      }),
+    }),
+
+    // Analytics
+    analytics: router({
+      monthlyRevenue: consultantProcedure
+        .input(z.object({ year: z.number(), month: z.number() }))
+        .query(async ({ input }) => {
+          return getMonthlyRevenue(input.year, input.month);
+        }),
+
+      averageClosingTime: consultantProcedure.query(async () => {
+        return getAverageClosingTime();
+      }),
+    }),
+
+    // Reminders
+    reminders: router({
+      create: consultantProcedure
+        .input(z.object({
+          projectId: z.number(),
+          type: z.enum(["incomplete_project", "no_response", "quote_followup", "blocked_project", "manual"]),
+          scheduledFor: z.date(),
+          emailSubject: z.string().optional(),
+          emailBody: z.string().optional(),
+        }))
+        .mutation(async ({ input }) => {
+          return createReminder(input);
+        }),
+
+      pending: consultantProcedure.query(async () => {
+        return getPendingReminders();
+      }),
+    }),
+
+    // Cron jobs (manual trigger for testing)
+    executeCronJobs: consultantProcedure.mutation(async () => {
+      const results = await executeAllCronJobs();
+      return results;
+    }),
   }),
 });
 

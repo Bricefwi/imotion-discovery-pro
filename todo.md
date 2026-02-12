@@ -59,3 +59,55 @@
 - [ ] Documenter l'architecture technique
 - [ ] Préparer le guide de déploiement
 - [ ] Créer le checkpoint final
+
+## CORRECTIONS URGENTES - Expérience Client
+
+- [x] Créer une vraie page d'accueil client avec présentation du parcours
+- [x] Ajouter des infographies engageantes pour expliquer les 7 phases
+- [x] Créer un parcours visuel interactif pour guider le client
+- [x] Séparer complètement les routes /client/* et /consultant/*
+- [x] Implémenter les redirections automatiques basées sur le rôle utilisateur
+- [ ] Bloquer l'accès au dashboard consultant pour les clients
+- [ ] Tester le parcours client complet de bout en bout
+
+## FONCTIONNALITÉS CRM COMPLÈTES
+
+### Pipeline de Vente
+- [x] Ajouter les statuts de pipeline (Lead, Qualifié, Devis envoyé, Négociation, Gagné, Perdu)
+- [x] Créer la vue Kanban drag & drop pour le pipeline
+- [x] Implémenter la probabilité de closing par étape
+- [x] Ajouter le montant prévisionnel par projet
+- [x] Créer l'historique des changements de statut (via activities)
+
+### Automatisations (Cron Jobs)
+- [x] Relance automatique J+2 si projet incomplet
+- [x] Relance automatique J+7 si pas de réponse client
+- [x] Relance devis J+3, J+7, J+14
+- [x] Notification consultant si projet bloqué >5 jours
+- [x] Système de cron jobs complet avec logsc CDC généré au client
+- [ ] Rapport hebdomadaire automatique pour consultant
+
+#### Tableau de Bord Analytique
+- [x] CA prévisionnel par mois
+- [x] CA réalisé par mois
+- [x] Taux de conversion global
+- [x] Temps moyen de closing
+- [x] Graphiques interactifs (Recharts)
+- [x] Répartition des projets par urgence et complexité
+- [x] Évolution mensuelle des leads et conversions
+- [x] Vue d'ensemble avec KPIses
+
+### Gestion des Contacts
+- [x] Table companies (entreprises clientes)
+- [x] Table contacts (décideurs multiples par entreprise)
+- [x] Lien projet <-> entreprise <-> contacts
+- [ ] Tags et segmentation des contacts
+- [ ] Historique des interactions par contact
+
+### Suivi Commercial
+- [x] Table activities (rendez-vous, appels, emails, notes)
+- [x] Table reminders (relances automatiques et manuelles)
+- [x] Table cron_jobs (historique des automatisations)
+- [x] Routes tRPC pour toutes les opérations CRM
+- [ ] Interface calendrier des rendez-vous (optionnel)
+- [ ] Interface timeline des interactions (optionnel)
