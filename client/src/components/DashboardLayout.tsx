@@ -170,8 +170,9 @@ function DashboardLayoutContent({
               </button>
               {!isCollapsed ? (
                 <div className="flex items-center gap-2 min-w-0">
-                  <span className="font-semibold tracking-tight truncate">
-                    Navigation
+                  <img src="/logo-imotion.png" alt="IMOTION" className="h-10 w-auto shrink-0" />
+                  <span className="font-semibold tracking-tight truncate text-sm">
+                    Discovery Pro
                   </span>
                 </div>
               ) : null}

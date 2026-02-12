@@ -1,0 +1,28 @@
+# robots.txt for IMOTION Discovery Pro
+# Optimized for search engines and AI crawlers
+
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /consultant/
+Disallow: /client/
+Disallow: /admin/
+
+# Allow AI crawlers (ChatGPT, Claude, Perplexity, etc.)
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Anthropic-AI
+Allow: /
+
+# Sitemap location
+Sitemap: https://3000-ix81q05nlqa6bzufpy469-4cced573.us2.manus.computer/sitemap.xml

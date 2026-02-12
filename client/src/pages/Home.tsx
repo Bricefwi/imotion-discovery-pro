@@ -1,6 +1,7 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { SEO } from "@/components/SEO";
 import { getLoginUrl } from "@/const";
 import { MessageSquare, BarChart3, FileText, Sparkles } from "lucide-react";
 import { useLocation } from "wouter";
@@ -30,12 +31,18 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <>
+      <SEO 
+        title="IMOTION Discovery Pro - Transformez vos idées en projets digitaux réussis"
+        description="Plateforme intelligente de découverte de besoins et génération automatique de cahiers des charges. Guidé par IA, 7 phases de découverte, CDC professionnel en 30 minutes."
+        keywords="cahier des charges, CDC, IA, intelligence artificielle, transformation digitale, consultant digital, génération automatique, discovery, analyse besoins"
+      />
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Header */}
       <header className="bg-white shadow-sm">
         <div className="container mx-auto px-4 py-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src="/logo-imotion.png" alt="IMOTION" className="h-16 w-auto" />
+            <img src="/logo-imotion.png" alt="IMOTION" className="h-24 w-auto" />
             <div>
               <h1 className="text-2xl font-bold text-gray-900">IMOTION Discovery Pro</h1>
               <p className="text-sm text-gray-600">Votre Partenaire en Transformation Digitale</p>
@@ -203,6 +210,7 @@ export default function Home() {
           </p>
         </div>
       </footer>
-    </div>
+      </div>
+    </>
   );
 }

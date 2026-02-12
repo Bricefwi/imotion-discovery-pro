@@ -1,4 +1,5 @@
 import sgMail from '@sendgrid/mail';
+import { getEmailVerificationTemplate } from './emailTemplates';
 
 // Initialize SendGrid with API key from environment
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY || '';
@@ -250,67 +251,12 @@ export async function sendEmailVerification(
   userName: string | null,
   verificationToken: string
 ): Promise<boolean> {
-  const verificationUrl = `https://imotion-discovery-pro.manus.space/verify-email/${verificationToken}`;
-  const subject = `✉️ Confirmez votre adresse email - IMOTION Discovery Pro`;
+  const verificationUrl = `https://3000-ix81q05nlqa6bzufpy469-4cced573.us2.manus.computer/verify-email/${verificationToken}`;
+  const subject = `Vérifiez votre adresse email - IMOTION Discovery Pro`;
   
-  const text = `Bonjour${userName ? ` ${userName}` : ''},
+  const text = `Bonjour${userName ? ` ${userName}` : ''},\n\nMerci de vous être inscrit sur IMOTION Discovery Pro. Pour activer votre compte, veuillez vérifier votre adresse email en cliquant sur le lien ci-dessous :\n\n${verificationUrl}\n\nCe lien est valide pendant 24 heures.\n\nCordialement,\nL'équipe IMOTION Conseil`;
 
-Bienvenue sur IMOTION Discovery Pro !
-
-Pour finaliser votre inscription et accéder à notre plateforme de qualification de projets digitaux, veuillez confirmer votre adresse email en cliquant sur le lien ci-dessous :
-
-👉 ${verificationUrl}
-
-Ce lien est valide pendant 24 heures.
-
-Si vous n'avez pas créé de compte sur IMOTION Discovery Pro, vous pouvez ignorer cet email.
-
-Cordialement,
-L'équipe IMOTION Conseil
-www.imotion-conseil.fr
-contact@imotion-conseil.fr`;
-
-  const html = `
-<!DOCTYPE html>
-<html>
-<head>
-  <style>
-    body { font-family: Inter, sans-serif; line-height: 1.6; color: #333; }
-    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-    .header { background: linear-gradient(135deg, #d8232a 0%, #ff4d54 100%); color: white; padding: 30px; text-align: center; border-radius: 12px 12px 0 0; }
-    .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 12px 12px; }
-    .button { display: inline-block; background: linear-gradient(135deg, #d8232a 0%, #ff4d54 100%); color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; margin: 20px 0; font-weight: bold; }
-    .footer { text-align: center; margin-top: 30px; color: #666; font-size: 14px; }
-    .info-box { background: #e8f4fd; border-left: 4px solid #2196F3; padding: 15px; margin: 20px 0; }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="header">
-      <h1>✉️ Confirmez votre email</h1>
-    </div>
-    <div class="content">
-      <p>Bonjour${userName ? ` <strong>${userName}</strong>` : ''},</p>
-      <p>Bienvenue sur <strong>IMOTION Discovery Pro</strong> !</p>
-      <p>Pour finaliser votre inscription et accéder à notre plateforme de qualification de projets digitaux, veuillez confirmer votre adresse email :</p>
-      <div style="text-align: center;">
-        <a href="${verificationUrl}" class="button">
-          Confirmer mon email
-        </a>
-      </div>
-      <div class="info-box">
-        <strong>⏱️ Ce lien est valide pendant 24 heures.</strong>
-      </div>
-      <p>Si vous n'avez pas créé de compte sur IMOTION Discovery Pro, vous pouvez ignorer cet email.</p>
-      <p>Cordialement,<br><strong>L'équipe IMOTION Conseil</strong></p>
-    </div>
-    <div class="footer">
-      <p>IMOTION Conseil - Solutions IA & NoCode<br>
-      <a href="https://www.imotion-conseil.fr">www.imotion-conseil.fr</a> | contact@imotion-conseil.fr</p>
-    </div>
-  </div>
-</body>
-</html>`;
+  const html = getEmailVerificationTemplate(verificationUrl, userName || undefined);
 
   return sendEmail({ to: userEmail, subject, text, html });
 }

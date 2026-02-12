@@ -427,3 +427,12 @@
 - [ ] Créer une section témoignages sur la page d'accueil
 - [ ] Ajouter des témoignages clients réels ou exemples
 - [ ] Design avec photos et citations
+
+
+## CORRECTION LOGO IMOTION
+
+- [x] Agrandir le logo sur la page d'accueil (h-16 → h-24 minimum)
+- [x] Ajouter le logo dans DashboardLayout (sidebar consultant)
+- [ ] Intégrer le logo dans les documents PDF générés
+- [x] Ajouter le logo dans les emails de vérification
+- [ ] Créer le footer complet avec logo IMOTION
