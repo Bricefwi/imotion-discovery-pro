@@ -5,6 +5,7 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import ClientWelcome from "./pages/ClientWelcome";
+import ClientDashboard from "./pages/ClientDashboard";
 import ClientProjects from "./pages/ClientProjects";
 import ClientConversation from "./pages/ClientConversation";
 import ConsultantDashboard from "./pages/ConsultantDashboard";
@@ -29,6 +30,11 @@ function Router() {
       <Route path="/verify-email/:token" component={VerifyEmail} />
       
       {/* Client Routes */}
+      <Route path="/client/dashboard">
+        <ProtectedRoute requiredRole="client" redirectTo="/">
+          <ClientDashboard />
+        </ProtectedRoute>
+      </Route>
       <Route path="/client/onboarding">
         <ProtectedRoute requiredRole="client" redirectTo="/">
           <ClientOnboarding />

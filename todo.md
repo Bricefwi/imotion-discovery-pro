@@ -436,3 +436,55 @@
 - [ ] Intégrer le logo dans les documents PDF générés
 - [x] Ajouter le logo dans les emails de vérification
 - [ ] Créer le footer complet avec logo IMOTION
+
+
+## SYSTÈME COMPLET - NOUVELLES FONCTIONNALITÉS
+
+### Dashboard Client Complet
+- [x] Créer la page ClientDashboard.tsx
+- [x] Afficher la progression des 7 phases de découverte
+- [x] Visualiser l'historique des conversations
+- [x] Accès aux documents générés (CDC, contrat, devis)
+- [x] Statut du projet en temps réel
+- [x] Notifications et alertes
+
+### Système de Devis Intelligent Basé sur le Marché
+- [ ] Recherche Perplexity Pro : benchmarking prix du marché
+- [ ] Calcul automatique basé sur complexité (simple/medium/complex)
+- [ ] Intégration coûts directs : dev, design, intégration
+- [ ] Intégration coûts indirects : gestion, QA, support
+- [ ] Calcul coûts outils IA/LLM (OpenAI, Claude, Gemini, Perplexity)
+- [ ] Calcul infrastructure : hébergement, domaine, emails
+- [ ] Services optionnels : marketing, accompagnement, maintenance
+- [ ] Interface de génération de devis avec formulaire
+- [ ] Génération PDF devis avec logo IMOTION
+- [ ] Envoi automatique par email
+
+### CDC Ultra-Technique via Perplexity Labs
+- [ ] Intégrer Perplexity Labs pour génération CDC approfondie
+- [ ] Créer version client (claire, validable)
+- [ ] Créer version admin (prompt engineering ultra-technique)
+- [ ] Transformation automatique CDC → Prompt pour Product Builder
+- [ ] Stockage sécurisé prompt (visible admin uniquement)
+
+### Transformation CDC → Prompt → Devis
+- [ ] Créer l'agent de transformation CDC en prompt engineering
+- [ ] Analyser le CDC pour extraire les spécifications techniques
+- [ ] Générer le prompt optimisé pour Claude Opus 4.5
+- [ ] Calculer automatiquement le devis basé sur le prompt
+- [ ] Workflow complet : validation CDC client → génération prompt → devis
+
+### Pages Légales Ultra-Protectrices (Agent IA Juridique)
+- [ ] Utiliser Claude Opus 4.5 pour génération juridique
+- [ ] Créer CGU ultra-protectrices pour le site et l'admin
+- [ ] Créer CGV conformes et protectrices
+- [ ] Créer Mentions Légales complètes
+- [ ] Créer Politique de Confidentialité RGPD
+- [ ] Créer Politique de Gestion des Cookies
+- [ ] Protection maximale responsabilité légale
+- [ ] Validation conformité législation française
+
+### Correction Logo IMOTION
+- [ ] Vérifier pourquoi le logo n'est pas visible
+- [ ] Corriger le chemin ou la taille du logo
+- [ ] Tester l'affichage sur toutes les pages
