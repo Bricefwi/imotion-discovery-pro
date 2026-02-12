@@ -1357,7 +1357,7 @@ export const appRouter = router({
         // Créer les 4 phases de paiement
         const quote = await getQuoteById(input.quoteId);
         if (quote) {
-          await createPaymentPhases(input.quoteId, parseFloat(quote.totalTtc));
+          await createPaymentPhases(input.quoteId, parseFloat(quote.totalTTC));
         }
 
         // TODO: Générer et envoyer l'accusé de réception par email
