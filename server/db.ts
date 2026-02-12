@@ -1,6 +1,13 @@
-import { eq } from "drizzle-orm";
+import { eq, desc, and, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { 
+  InsertUser, users, 
+  projects, InsertProject, Project,
+  messages, InsertMessage, Message,
+  documents, InsertDocument, Document,
+  notifications, InsertNotification, Notification,
+  consultantNotes, InsertConsultantNote, ConsultantNote
+} from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -89,4 +96,239 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-// TODO: add feature queries here as your schema grows.
+// ============ PROJECT QUERIES ============
+
+export async function createProject(project: InsertProject): Promise<Project> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(projects).values(project);
+  const insertedId = Number(result[0].insertId);
+  
+  const inserted = await db.select().from(projects).where(eq(projects.id, insertedId)).limit(1);
+  return inserted[0]!;
+}
+
+export async function getProjectById(id: number): Promise<Project | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  const result = await db.select().from(projects).where(eq(projects.id, id)).limit(1);
+  return result[0];
+}
+
+export async function getProjectsByClientId(clientId: number): Promise<Project[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  return db.select().from(projects)
+    .where(eq(projects.clientId, clientId))
+    .orderBy(desc(projects.updatedAt));
+}
+
+export async function getAllProjects(): Promise<Project[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  return db.select().from(projects).orderBy(desc(projects.updatedAt));
+}
+
+export async function getActiveProjects(): Promise<Project[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  return db.select().from(projects)
+    .where(eq(projects.status, 'active'))
+    .orderBy(desc(projects.updatedAt));
+}
+
+export async function updateProject(id: number, updates: Partial<InsertProject>): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.update(projects).set(updates).where(eq(projects.id, id));
+}
+
+// ============ MESSAGE QUERIES ============
+
+export async function createMessage(message: InsertMessage): Promise<Message> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(messages).values(message);
+  const insertedId = Number(result[0].insertId);
+  
+  const inserted = await db.select().from(messages).where(eq(messages.id, insertedId)).limit(1);
+  return inserted[0]!;
+}
+
+export async function getMessagesByProjectId(projectId: number): Promise<Message[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  return db.select().from(messages)
+    .where(eq(messages.projectId, projectId))
+    .orderBy(messages.createdAt);
+}
+
+export async function getMessagesByPhase(projectId: number, phase: number): Promise<Message[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  return db.select().from(messages)
+    .where(and(
+      eq(messages.projectId, projectId),
+      eq(messages.phase, phase)
+    ))
+    .orderBy(messages.createdAt);
+}
+
+// ============ DOCUMENT QUERIES ============
+
+export async function createDocument(document: InsertDocument): Promise<Document> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(documents).values(document);
+  const insertedId = Number(result[0].insertId);
+  
+  const inserted = await db.select().from(documents).where(eq(documents.id, insertedId)).limit(1);
+  return inserted[0]!;
+}
+
+export async function getDocumentsByProjectId(projectId: number): Promise<Document[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  return db.select().from(documents)
+    .where(eq(documents.projectId, projectId))
+    .orderBy(desc(documents.createdAt));
+}
+
+export async function getLatestDocumentByType(projectId: number, type: 'cdc' | 'contract' | 'upload'): Promise<Document | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  const result = await db.select().from(documents)
+    .where(and(
+      eq(documents.projectId, projectId),
+      eq(documents.type, type)
+    ))
+    .orderBy(desc(documents.version))
+    .limit(1);
+  
+  return result[0];
+}
+
+// ============ NOTIFICATION QUERIES ============
+
+export async function createNotification(notification: InsertNotification): Promise<Notification> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(notifications).values(notification);
+  const insertedId = Number(result[0].insertId);
+  
+  const inserted = await db.select().from(notifications).where(eq(notifications.id, insertedId)).limit(1);
+  return inserted[0]!;
+}
+
+export async function getNotificationsByConsultantId(consultantId: number, unreadOnly: boolean = false): Promise<Notification[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  const conditions = [eq(notifications.consultantId, consultantId)];
+  if (unreadOnly) {
+    conditions.push(eq(notifications.read, false));
+  }
+
+  return db.select().from(notifications)
+    .where(and(...conditions))
+    .orderBy(desc(notifications.createdAt));
+}
+
+export async function markNotificationAsRead(id: number): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.update(notifications).set({ read: true }).where(eq(notifications.id, id));
+}
+
+export async function markAllNotificationsAsRead(consultantId: number): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.update(notifications)
+    .set({ read: true })
+    .where(and(
+      eq(notifications.consultantId, consultantId),
+      eq(notifications.read, false)
+    ));
+}
+
+// ============ CONSULTANT NOTE QUERIES ============
+
+export async function createConsultantNote(note: InsertConsultantNote): Promise<ConsultantNote> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(consultantNotes).values(note);
+  const insertedId = Number(result[0].insertId);
+  
+  const inserted = await db.select().from(consultantNotes).where(eq(consultantNotes.id, insertedId)).limit(1);
+  return inserted[0]!;
+}
+
+export async function getNotesByProjectId(projectId: number): Promise<ConsultantNote[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  return db.select().from(consultantNotes)
+    .where(eq(consultantNotes.projectId, projectId))
+    .orderBy(desc(consultantNotes.createdAt));
+}
+
+// ============ STATISTICS QUERIES ============
+
+export async function getProjectStats() {
+  const db = await getDb();
+  if (!db) return { total: 0, active: 0, completed: 0, archived: 0 };
+
+  const result = await db.select({
+    status: projects.status,
+    count: sql<number>`count(*)`.as('count')
+  })
+  .from(projects)
+  .groupBy(projects.status);
+
+  const stats = { total: 0, active: 0, completed: 0, archived: 0 };
+  result.forEach(row => {
+    stats.total += row.count;
+    if (row.status === 'active') stats.active = row.count;
+    if (row.status === 'completed') stats.completed = row.count;
+    if (row.status === 'archived') stats.archived = row.count;
+  });
+
+  return stats;
+}
+
+export async function getConsultantStats(consultantId: number) {
+  const db = await getDb();
+  if (!db) return { unreadNotifications: 0, activeProjects: 0 };
+
+  const unreadCount = await db.select({ count: sql<number>`count(*)`.as('count') })
+    .from(notifications)
+    .where(and(
+      eq(notifications.consultantId, consultantId),
+      eq(notifications.read, false)
+    ));
+
+  const activeCount = await db.select({ count: sql<number>`count(*)`.as('count') })
+    .from(projects)
+    .where(eq(projects.status, 'active'));
+
+  return {
+    unreadNotifications: unreadCount[0]?.count || 0,
+    activeProjects: activeCount[0]?.count || 0
+  };
+}
