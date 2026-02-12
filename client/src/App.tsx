@@ -11,6 +11,9 @@ import ConsultantDashboard from "./pages/ConsultantDashboard";
 import ConsultantPipeline from "./pages/ConsultantPipeline";
 import ConsultantAnalytics from "./pages/ConsultantAnalytics";
 import ConsultantProjectDetail from "./pages/ConsultantProjectDetail";
+import ConsultantTemplates from "./pages/ConsultantTemplates";
+import ConsultantTemplateEditor from "./pages/ConsultantTemplateEditor";
+import AdminNotifications from "./pages/AdminNotifications";
 import ClientOnboarding from "./pages/ClientOnboarding";
 import VerifyEmail from "./pages/VerifyEmail";
 import { ProtectedRoute } from "./components/ProtectedRoute";
@@ -61,6 +64,28 @@ function Router() {
       <Route path="/consultant/project/:id">
         <ProtectedRoute requiredRole="consultant" redirectTo="/">
           <ConsultantProjectDetail />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/consultant/templates">
+        <ProtectedRoute requiredRole="consultant" redirectTo="/">
+          <ConsultantTemplates />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/consultant/templates/new">
+        <ProtectedRoute requiredRole="consultant" redirectTo="/">
+          <ConsultantTemplateEditor />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/consultant/templates/edit/:id">
+        <ProtectedRoute requiredRole="consultant" redirectTo="/">
+          <ConsultantTemplateEditor />
+        </ProtectedRoute>
+      </Route>
+      
+      {/* Admin Routes */}
+      <Route path="/admin/notifications">
+        <ProtectedRoute requiredRole="admin" redirectTo="/">
+          <AdminNotifications />
         </ProtectedRoute>
       </Route>
       

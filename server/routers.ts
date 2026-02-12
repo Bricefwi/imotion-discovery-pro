@@ -30,6 +30,23 @@ import {
   hasCompletedOnboarding,
 } from "./clientProfileDb";
 import {
+  createCdcTemplate,
+  getCdcTemplateById,
+  getCdcTemplatesByConsultant,
+  getAllPublicCdcTemplates,
+  updateCdcTemplate,
+  deleteCdcTemplate,
+  incrementTemplateUsage,
+  createTemplateSection,
+  getTemplateSectionById,
+  getTemplateSectionsByCategory,
+  getAllPublicTemplateSections,
+  getTemplateSectionsByConsultant,
+  updateTemplateSection,
+  deleteTemplateSection,
+  incrementSectionUsage,
+} from "./cdcTemplatesDb";
+import {
   createEmailVerification,
   getVerificationByToken,
   markEmailAsVerified,
@@ -590,6 +607,65 @@ export const appRouter = router({
         return results;
       }),
 
+    // Preview document before generation
+    previewDocument: consultantProcedure
+      .input(z.object({
+        projectId: z.number(),
+        type: z.enum(["cdc", "contract"]),
+      }))
+      .query(async ({ input }) => {
+        const project = await getProjectById(input.projectId);
+        
+        if (!project) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Project not found' });
+        }
+
+        const messages = await getMessagesByProjectId(input.projectId);
+
+        let markdown = "";
+
+        if (input.type === "cdc") {
+          markdown = await generateCDC({
+            title: project.title,
+            clientName: `Client #${project.clientId}`,
+            extractedData: project.extractedData || {},
+            psychologicalProfile: project.psychologicalProfile || {},
+            messages: messages.map(msg => ({
+              role: msg.role,
+              content: msg.content,
+              createdAt: msg.createdAt,
+            })),
+          });
+        } else if (input.type === "contract") {
+          // First generate CDC
+          const cdcMarkdown = await generateCDC({
+            title: project.title,
+            clientName: `Client #${project.clientId}`,
+            extractedData: project.extractedData || {},
+            psychologicalProfile: project.psychologicalProfile || {},
+            messages: messages.map(msg => ({
+              role: msg.role,
+              content: msg.content,
+              createdAt: msg.createdAt,
+            })),
+          });
+
+          // Then generate contract
+          markdown = await generateContract(cdcMarkdown, {
+            title: project.title,
+            clientName: `Client #${project.clientId}`,
+            extractedData: project.extractedData || {},
+            psychologicalProfile: project.psychologicalProfile || {},
+            messages: [],
+          });
+        }
+
+        return {
+          markdown,
+          projectTitle: project.title,
+        };
+      }),
+
     generateContract: consultantProcedure
       .input(z.object({
         projectId: z.number(),
@@ -957,6 +1033,166 @@ export const appRouter = router({
     }),
   }),
 
+  // CDC Templates Management
+  cdcTemplates: router({
+    // Create a new template
+    create: consultantProcedure
+      .input(z.object({
+        name: z.string(),
+        description: z.string().optional(),
+        category: z.enum(["web", "mobile", "ecommerce", "saas", "custom"]),
+        sections: z.array(z.object({
+          id: z.string(),
+          title: z.string(),
+          content: z.string(),
+          order: z.number(),
+          required: z.boolean(),
+          variables: z.array(z.string()),
+        })),
+        isDefault: z.boolean().optional(),
+        isPublic: z.boolean().optional(),
+        tags: z.array(z.string()).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        return createCdcTemplate({
+          consultantId: ctx.user.id,
+          ...input,
+        });
+      }),
+
+    // Get template by ID
+    getById: consultantProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => {
+        return getCdcTemplateById(input.id);
+      }),
+
+    // List consultant's templates
+    list: consultantProcedure.query(async ({ ctx }) => {
+      return getCdcTemplatesByConsultant(ctx.user.id);
+    }),
+
+    // List public templates
+    listPublic: consultantProcedure.query(async () => {
+      return getAllPublicCdcTemplates();
+    }),
+
+    // Update template
+    update: consultantProcedure
+      .input(z.object({
+        id: z.number(),
+        name: z.string().optional(),
+        description: z.string().optional(),
+        category: z.enum(["web", "mobile", "ecommerce", "saas", "custom"]).optional(),
+        sections: z.array(z.object({
+          id: z.string(),
+          title: z.string(),
+          content: z.string(),
+          order: z.number(),
+          required: z.boolean(),
+          variables: z.array(z.string()),
+        })).optional(),
+        isDefault: z.boolean().optional(),
+        isPublic: z.boolean().optional(),
+        tags: z.array(z.string()).optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { id, ...updates } = input;
+        await updateCdcTemplate(id, updates);
+        return { success: true };
+      }),
+
+    // Delete template
+    delete: consultantProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        await deleteCdcTemplate(input.id);
+        return { success: true };
+      }),
+
+    // Increment usage count
+    incrementUsage: consultantProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        await incrementTemplateUsage(input.id);
+        return { success: true };
+      }),
+  }),
+
+  // Template Sections Library
+  templateSections: router({
+    // Create a new section
+    create: consultantProcedure
+      .input(z.object({
+        title: z.string(),
+        content: z.string(),
+        category: z.string(),
+        variables: z.array(z.string()).optional(),
+        isPublic: z.boolean().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        return createTemplateSection({
+          consultantId: ctx.user.id,
+          ...input,
+        });
+      }),
+
+    // Get section by ID
+    getById: consultantProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => {
+        return getTemplateSectionById(input.id);
+      }),
+
+    // List sections by category
+    listByCategory: consultantProcedure
+      .input(z.object({ category: z.string() }))
+      .query(async ({ input }) => {
+        return getTemplateSectionsByCategory(input.category);
+      }),
+
+    // List public sections
+    listPublic: consultantProcedure.query(async () => {
+      return getAllPublicTemplateSections();
+    }),
+
+    // List consultant's sections
+    list: consultantProcedure.query(async ({ ctx }) => {
+      return getTemplateSectionsByConsultant(ctx.user.id);
+    }),
+
+    // Update section
+    update: consultantProcedure
+      .input(z.object({
+        id: z.number(),
+        title: z.string().optional(),
+        content: z.string().optional(),
+        category: z.string().optional(),
+        variables: z.array(z.string()).optional(),
+        isPublic: z.boolean().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { id, ...updates } = input;
+        await updateTemplateSection(id, updates);
+        return { success: true };
+      }),
+
+    // Delete section
+    delete: consultantProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        await deleteTemplateSection(input.id);
+        return { success: true };
+      }),
+
+    // Increment usage count
+    incrementUsage: consultantProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        await incrementSectionUsage(input.id);
+        return { success: true };
+      }),
+  }),
 
 });
 

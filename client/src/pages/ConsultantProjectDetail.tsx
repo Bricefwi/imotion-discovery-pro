@@ -24,6 +24,7 @@ import { useLocation, useParams } from "wouter";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
+import { DocumentPreview } from "@/components/DocumentPreview";
 
 export default function ConsultantProjectDetail() {
   const { user } = useAuth();
@@ -214,6 +215,12 @@ export default function ConsultantProjectDetail() {
                   Documents générés
                 </h2>
                 <div className="flex gap-2">
+                  <DocumentPreview
+                    projectId={projectId}
+                    documentType="cdc"
+                    onGenerate={(format) => generateCDCMutation.mutate({ projectId, format })}
+                    isGenerating={generateCDCMutation.isPending}
+                  />
                   <Button
                     onClick={() => generateCDCMutation.mutate({ projectId, format: 'both' })}
                     disabled={generateCDCMutation.isPending}
@@ -221,6 +228,13 @@ export default function ConsultantProjectDetail() {
                   >
                     {generateCDCMutation.isPending ? "Génération..." : "Générer CDC"}
                   </Button>
+                  
+                  <DocumentPreview
+                    projectId={projectId}
+                    documentType="contract"
+                    onGenerate={(format) => generateContractMutation.mutate({ projectId, format })}
+                    isGenerating={generateContractMutation.isPending}
+                  />
                   <Button
                     onClick={() => generateContractMutation.mutate({ projectId, format: 'both' })}
                     disabled={generateContractMutation.isPending}

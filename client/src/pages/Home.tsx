@@ -35,7 +35,7 @@ export default function Home() {
       <header className="bg-white shadow-sm">
         <div className="container mx-auto px-4 py-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src="/logo-imotion.png" alt="IMOTION" className="h-12 w-auto" />
+            <img src="/logo-imotion.png" alt="IMOTION" className="h-16 w-auto" />
             <div>
               <h1 className="text-2xl font-bold text-gray-900">IMOTION Discovery Pro</h1>
               <p className="text-sm text-gray-600">Votre Partenaire en Transformation Digitale</p>
@@ -185,7 +185,7 @@ export default function Home() {
       <footer className="bg-gray-900 text-white py-8">
         <div className="container mx-auto px-4 text-center">
           <div className="flex items-center justify-center gap-3 mb-4">
-            <img src="/logo-imotion.png" alt="IMOTION" className="h-8 w-auto" />
+            <img src="/logo-imotion.png" alt="IMOTION" className="h-12 w-auto" />
             <span className="text-xl font-bold">IMOTION Conseil</span>
           </div>
           <p className="text-gray-400 mb-2">Solutions IA No-Code</p>

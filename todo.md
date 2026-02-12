@@ -271,3 +271,75 @@
 - [ ] Créer la bibliothèque de sections modulaires
 - [ ] Permettre la sauvegarde et réutilisation des templates
 - [ ] Implémenter la sélection de template lors de la génération de CDC
+
+
+## NOUVELLES FONCTIONNALITÉS DEMANDÉES
+
+### Éditeur de Templates CDC Personnalisables
+- [x] Créer le schéma de base de données pour les templates (table cdc_templates)
+- [x] Créer les routes tRPC pour CRUD des templates
+- [x] Développer l'interface d'édition de templates pour consultants
+- [x] Implémenter l'éditeur de sections modulaires (drag & drop)
+- [x] Créer le système de variables dynamiques ({{client_name}}, {{budget}}, {{deadline}}, etc.)
+- [x] Implémenter la prévisualisation en temps réel du template
+- [x] Permettre la sauvegarde et réutilisation des templates
+- [ ] Intégrer la sélection de template lors de la génération de CDC
+
+### Notifications Temps Réel pour Inscriptions
+- [x] Créer l'événement WebSocket user:registered
+- [x] Émettre l'événement lors de la création d'un nouvel utilisateur
+- [x] Créer une page /admin/notifications pour les administrateurs
+- [x] Afficher les notifications d'inscription en temps réel
+- [x] Ajouter un badge de compteur sur l'icône de notification
+- [x] Permettre de marquer les notifications comme lues
+
+### Prévisualisation des Documents
+- [x] Créer une route tRPC pour générer un aperçu du document
+- [x] Implémenter la prévisualisation PDF dans un modal
+- [x] Implémenter la prévisualisation Word/Docx (conversion en HTML)
+- [x] Ajouter un bouton "Prévisualiser" avant "Télécharger"
+- [ ] Permettre l'édition mineure avant téléchargement final (fonctionnalité avancée)
+- [ ] Ajouter un système de cache pour les prévisualisations (optimisation future)
+
+
+## CORRECTIONS URGENTES
+
+### Erreurs à corriger
+- [ ] Corriger l'erreur sur /consultant/analytics
+- [ ] Corriger l'erreur sur /consultant/notifications (route inexistante, doit être /admin/notifications)
+- [ ] Ajouter un bouton retour sur /consultant/dashboard
+
+### Pages légales RGPD
+- [ ] Créer la page Mentions légales
+- [ ] Créer la page CGU (Conditions Générales d'Utilisation)
+- [ ] Créer la page CGV (Conditions Générales de Vente)
+- [ ] Créer la page Politique de Confidentialité
+- [ ] Créer la page Gestion des Cookies
+- [ ] Ajouter les liens dans le footer
+
+- [x] Agrandir le logo pour le rendre plus visible
+
+
+## CHARTE GRAPHIQUE IMOTION
+
+### Documents générés (CDC, Contrats, Rapports)
+- [ ] Intégrer le logo IMOTION dans l'en-tête des documents PDF
+- [ ] Appliquer les couleurs de la charte (#d8232a rouge, noir, blanc)
+- [ ] Uniformiser la typographie professionnelle
+- [ ] Ajouter un pied de page avec coordonnées IMOTION
+
+### Emails
+- [ ] Créer un template HTML d'email avec la charte graphique IMOTION
+- [ ] Intégrer le logo dans les emails de vérification
+- [ ] Appliquer les couleurs et typographie de la marque
+- [ ] Ajouter signature professionnelle IMOTION
+
+
+## FOOTER COMPLET
+
+- [ ] Créer un composant Footer réutilisable
+- [ ] Ajouter les coordonnées complètes IMOTION (email, téléphone, adresse)
+- [ ] Ajouter les liens vers réseaux sociaux
+- [ ] Ajouter une navigation rapide (sections principales)
+- [ ] Intégrer le footer dans toutes les pages de l'application
+- [ ] Ajouter le copyright et SIRET

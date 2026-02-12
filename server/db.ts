@@ -76,9 +76,24 @@ export async function upsertUser(user: InsertUser): Promise<void> {
       updateSet.lastSignedIn = new Date();
     }
 
-    await db.insert(users).values(values).onDuplicateKeyUpdate({
+    const result = await db.insert(users).values(values).onDuplicateKeyUpdate({
       set: updateSet,
     });
+    
+    // Check if this is a new user registration (not just an update)
+    const isNewUser = result[0].insertId > 0;
+    if (isNewUser) {
+      // Get the newly created user
+      const newUser = await db.select().from(users).where(eq(users.openId, user.openId)).limit(1);
+      if (newUser[0]) {
+        // Emit WebSocket event to admins
+        const { emitToConsultants } = await import("./websocket");
+        emitToConsultants('user:registered', {
+          user: newUser[0],
+          timestamp: new Date(),
+        });
+      }
+    }
   } catch (error) {
     console.error("[Database] Failed to upsert user:", error);
     throw error;
