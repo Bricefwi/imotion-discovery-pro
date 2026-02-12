@@ -542,3 +542,80 @@ export const receptionItems = mysqlTable("reception_items", {
 
 export type ReceptionItem = typeof receptionItems.$inferSelect;
 export type InsertReceptionItem = typeof receptionItems.$inferInsert;
+
+
+/**
+ * Client Reviews - Avis clients avec modération
+ */
+export const clientReviews = mysqlTable("client_reviews", {
+  id: int("id").autoincrement().primaryKey(),
+  projectId: int("projectId").references(() => projects.id),
+  userId: int("userId").notNull().references(() => users.id),
+  rating: int("rating").notNull(), // 1-5 étoiles
+  comment: text("comment").notNull(),
+  status: mysqlEnum("status", ["pending", "approved", "rejected"]).default("pending").notNull(),
+  publishedAt: timestamp("publishedAt"),
+  moderatedBy: int("moderatedBy").references(() => users.id), // Admin qui a modéré
+  moderatedAt: timestamp("moderatedAt"),
+  moderationComment: text("moderationComment"), // Raison du rejet
+  // Réponse du consultant
+  consultantResponse: text("consultantResponse"),
+  consultantRespondedAt: timestamp("consultantRespondedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ClientReview = typeof clientReviews.$inferSelect;
+export type InsertClientReview = typeof clientReviews.$inferInsert;
+
+/**
+ * Roadmap Items - Fonctionnalités produit en développement
+ */
+export const roadmapItems = mysqlTable("roadmap_items", {
+  id: int("id").autoincrement().primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description").notNull(),
+  status: mysqlEnum("status", ["backlog", "planned", "in_progress", "completed", "cancelled"]).default("backlog").notNull(),
+  priority: mysqlEnum("priority", ["low", "medium", "high", "critical"]).default("medium").notNull(),
+  category: varchar("category", { length: 100 }), // "feature", "improvement", "bug_fix"
+  votes: int("votes").default(0), // Nombre de votes clients
+  estimatedDate: timestamp("estimatedDate"), // Date de livraison estimée
+  completedAt: timestamp("completedAt"),
+  createdBy: int("createdBy").references(() => users.id),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type RoadmapItem = typeof roadmapItems.$inferSelect;
+export type InsertRoadmapItem = typeof roadmapItems.$inferInsert;
+
+/**
+ * Analytics Events - Événements de tracking pour analytics
+ */
+export const analyticsEvents = mysqlTable("analytics_events", {
+  id: int("id").autoincrement().primaryKey(),
+  eventType: varchar("eventType", { length: 100 }).notNull(), // "page_view", "signup", "project_created", etc.
+  userId: int("userId").references(() => users.id), // null si non connecté
+  sessionId: varchar("sessionId", { length: 255 }), // ID de session
+  // Données de l'événement
+  eventData: json("eventData").$type<{
+    page?: string;
+    referrer?: string;
+    utm_source?: string;
+    utm_medium?: string;
+    utm_campaign?: string;
+    [key: string]: any;
+  }>(),
+  // Données géographiques et techniques
+  ipAddress: varchar("ipAddress", { length: 45 }),
+  userAgent: text("userAgent"),
+  country: varchar("country", { length: 2 }), // Code pays ISO
+  city: varchar("city", { length: 100 }),
+  device: varchar("device", { length: 50 }), // "desktop", "mobile", "tablet"
+  browser: varchar("browser", { length: 50 }),
+  os: varchar("os", { length: 50 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type AnalyticsEvent = typeof analyticsEvents.$inferSelect;
+export type InsertAnalyticsEvent = typeof analyticsEvents.$inferInsert;

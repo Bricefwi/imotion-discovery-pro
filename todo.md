@@ -495,17 +495,17 @@
 ### Validation CGU/CGV avec Traçabilité
 - [x] Créer la table `quote_acceptances` (quote_id, user_id, accepted_at, ip_address, user_agent, cgu_version, cgv_version)
 - [ ] Ajouter checkbox CGU + CGV obligatoire sur la page de validation devis
-- [ ] Enregistrer l'horodatage complet (date, heure, minute, IP, user-agent)
+- [x] Enregistrer l'horodatage complet (date, heure, minute, IP, user-agent)
 - [ ] Générer automatiquement un accusé de réception PDF signé électroniquement
 - [ ] Envoyer email immédiat avec AR au client après acceptation
 
 ### Paiement Échelonné 30-30-30-10
 - [x] Créer la table `payment_phases` (quote_id, phase_number, percentage, amount, status, due_date, paid_at)
-- [ ] Implémenter Phase 1 (30%) : Acompte à la signature
-- [ ] Implémenter Phase 2 (30%) : Avancement à mi-parcours (50% fonctionnalités)
-- [ ] Implémenter Phase 3 (30%) : Pré-livraison à 100% développement
-- [ ] Implémenter Phase 4 (10%) : Solde après validation PV de recette
-- [ ] Créer les routes tRPC pour gestion des paiements
+- [x] Implémenter Phase 1 (30%) : Acompte à la signature
+- [x] Implémenter Phase 2 (30%) : Avancement à mi-parcours (50% fonctionnalités)
+- [x] Implémenter Phase 3 (30%) : Pré-livraison à 100% développement
+- [x] Implémenter Phase 4 (10%) : Solde après validation PV de recette
+- [x] Créer les routes tRPC pour gestion des paiements
 - [ ] Interface consultant pour marquer les phases comme payées
 
 ### Procès-Verbal de Recette Client
@@ -513,7 +513,7 @@
 - [x] Créer la table `reception_items` (report_id, functionality, specification, status, comments)
 - [ ] Générer automatiquement le PV depuis le devis accepté
 - [ ] Créer la grille de validation (✅ Conforme / ⚠️ Réserve / ❌ Non conforme)
-- [ ] Implémenter la signature électronique client + consultant
+- [x] Implémenter la signature électronique client + consultant
 - [ ] Déclencher automatiquement le paiement Phase 4 après validation
 - [ ] Générer le PDF du PV de recette
 
@@ -538,3 +538,64 @@
 #### CRON Reporting
 - [ ] Rapport hebdomadaire consultant (CA, pipeline, projets bloqués)
 - [ ] Rapport mensuel admin (KPIs, trésorerie, prévisions)
+
+
+## INTERFACE DE GESTION SEO
+
+- [ ] Créer la page de paramètres SEO dans le Management UI
+- [ ] Permettre la modification du titre, description, mots-clés
+- [ ] Upload d'image Open Graph et favicon
+- [ ] Prévisualisation des meta tags
+- [ ] Sauvegarde des paramètres SEO en base de données
+
+
+## DASHBOARD ADMINISTRATEUR ULTRA-COMPLET
+
+### 📊 Analytics & Suivi
+- [ ] Créer le tableau de bord avec KPIs temps réel (visiteurs, inscriptions, conversions)
+- [ ] Implémenter les graphiques de fréquentation (journalier, hebdomadaire, mensuel)
+- [ ] Créer le funnel de conversion (visiteur → inscription → projet → devis → paiement)
+- [ ] Ajouter l'analyse géographique des visiteurs
+- [ ] Tracker les sources de trafic (direct, SEO, réseaux sociaux, campagnes)
+
+### 💰 Finance & Facturation
+- [ ] Dashboard CA (aujourd'hui, ce mois, cette année)
+- [ ] Pipeline commercial (devis en cours, montant prévisionnel)
+- [ ] Suivi des paiements par phase (30-30-30-10)
+- [ ] Alertes factures impayées
+- [ ] Prévisions de trésorerie
+
+### 🎯 Marketing
+- [ ] Suivi des campagnes actives (Google Ads, Meta Ads, LinkedIn)
+- [ ] Calcul du ROI par canal d'acquisition
+- [ ] Taux de conversion par source
+- [ ] Gestion des promotions et codes promo
+
+### 👥 CRM Intégré
+- [ ] Liste complète des clients avec filtres avancés
+- [ ] Fiches clients détaillées (coordonnées, historique, projets, paiements)
+- [ ] Segmentation automatique (leads, clients actifs, clients perdus)
+- [ ] Historique des interactions (emails, appels, réunions)
+- [ ] Notes et rappels consultant
+
+### ⭐ Gestion des Avis Clients
+- [x] Créer la table `client_reviews` (project_id, rating, comment, status, published_at)
+- [ ] Interface de modération des avis avant publication
+- [ ] Système de notation (1-5 étoiles)
+- [ ] Réponses aux avis
+- [ ] Statistiques (note moyenne, nombre d'avis)
+- [ ] Section témoignages sur la page d'accueil
+
+### 🗺️ Roadmap Produit
+- [x] Créer la table `roadmap_items` (title, description, status, priority, votes)
+- [ ] Interface de gestion de la roadmap
+- [ ] Fonctionnalités en développement
+- [ ] Backlog priorisé
+- [ ] Timeline des releases
+
+### 🔍 SEO & Référencement
+- [ ] Suivi des positions Google par mot-clé
+- [ ] Analyse des backlinks
+- [ ] Pages les plus visitées
+- [ ] Taux de rebond par page
+- [ ] Suggestions d'optimisation
