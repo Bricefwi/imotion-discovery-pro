@@ -619,3 +619,22 @@ export const analyticsEvents = mysqlTable("analytics_events", {
 
 export type AnalyticsEvent = typeof analyticsEvents.$inferSelect;
 export type InsertAnalyticsEvent = typeof analyticsEvents.$inferInsert;
+
+
+/**
+ * Email Login Codes - Codes de connexion par email (passwordless authentication)
+ */
+export const emailLoginCodes = mysqlTable("email_login_codes", {
+  id: int("id").autoincrement().primaryKey(),
+  email: varchar("email", { length: 255 }).notNull(),
+  code: varchar("code", { length: 6 }).notNull(), // Code à 6 chiffres
+  expiresAt: timestamp("expiresAt").notNull(), // Expiration après 10 minutes
+  attempts: int("attempts").default(0).notNull(), // Nombre de tentatives de validation
+  verified: int("verified").default(0).notNull(), // 0 = non vérifié, 1 = vérifié
+  ipAddress: varchar("ipAddress", { length: 45 }),
+  userAgent: text("userAgent"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type EmailLoginCode = typeof emailLoginCodes.$inferSelect;
+export type InsertEmailLoginCode = typeof emailLoginCodes.$inferInsert;

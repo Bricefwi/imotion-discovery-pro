@@ -599,3 +599,45 @@
 - [ ] Pages les plus visitées
 - [ ] Taux de rebond par page
 - [ ] Suggestions d'optimisation
+
+
+## 🔐 AUTHENTIFICATION OAUTH MULTI-PROVIDERS (PRIORITÉ ABSOLUE)
+
+### Configuration OAuth
+- [ ] Installer les packages nécessaires (passport, passport-google-oauth20, passport-microsoft, passport-apple)
+- [ ] Créer les applications OAuth sur Google Cloud Console
+- [ ] Créer les applications OAuth sur Microsoft Azure
+- [ ] Créer les applications OAuth sur Apple Developer
+- [ ] Configurer les redirect URIs pour chaque provider
+
+### Backend OAuth
+- [ ] Créer les routes OAuth pour Google (/api/auth/google, /api/auth/google/callback)
+- [ ] Créer les routes OAuth pour Microsoft (/api/auth/microsoft, /api/auth/microsoft/callback)
+- [ ] Créer les routes OAuth pour Apple (/api/auth/apple, /api/auth/apple/callback)
+- [ ] Gérer la création/liaison de compte utilisateur après OAuth
+- [ ] Stocker les tokens OAuth de manière sécurisée
+
+### Frontend OAuth
+- [ ] Créer les boutons de connexion Google, Microsoft, Apple
+- [ ] Ajouter les icônes officielles de chaque provider
+- [ ] Gérer les redirections après authentification
+- [ ] Afficher les erreurs OAuth de manière claire
+
+### Sécurité Renforcée
+- [ ] Implémenter CSRF protection pour OAuth
+- [ ] Ajouter rate limiting sur les routes d'authentification
+- [ ] Logger toutes les tentatives de connexion (succès/échec)
+- [ ] Implémenter 2FA (Two-Factor Authentication) optionnel
+- [ ] Ajouter la détection de connexions suspectes (IP, géolocalisation)
+
+
+### 📧 Authentification par Email avec Code (Magic Link Alternative)
+- [ ] Créer la table `email_login_codes` (email, code, expiresAt, attempts)
+- [ ] Générer un code à 6 chiffres aléatoire
+- [ ] Envoyer le code par email avec template professionnel
+- [ ] Créer la route tRPC pour demander un code (/auth/requestCode)
+- [ ] Créer la route tRPC pour valider le code (/auth/validateCode)
+- [ ] Implémenter l'expiration du code (10 minutes)
+- [ ] Rate limiting : max 3 codes par heure par email
+- [ ] Interface de saisie du code (6 champs séparés)
+- [ ] Resend code button (avec cooldown de 60 secondes)

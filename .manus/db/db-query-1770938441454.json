@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE `email_login_codes` (\n\t`id` int AUTO_INCREMENT NOT NULL,\n\t`email` varchar(255) NOT NULL,\n\t`code` varchar(6) NOT NULL,\n\t`expiresAt` timestamp NOT NULL,\n\t`attempts` int NOT NULL DEFAULT 0,\n\t`verified` int NOT NULL DEFAULT 0,\n\t`ipAddress` varchar(45),\n\t`userAgent` text,\n\t`createdAt` timestamp NOT NULL DEFAULT (now()),\n\tCONSTRAINT `email_login_codes_id` PRIMARY KEY(`id`)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3aGpTUHh1RaZFaW.root --database 3vaZJ9txrdLVJAaMV5dBkb --execute CREATE TABLE `email_login_codes` (\n\t`id` int AUTO_INCREMENT NOT NULL,\n\t`email` varchar(255) NOT NULL,\n\t`code` varchar(6) NOT NULL,\n\t`expiresAt` timestamp NOT NULL,\n\t`attempts` int NOT NULL DEFAULT 0,\n\t`verified` int NOT NULL DEFAULT 0,\n\t`ipAddress` varchar(45),\n\t`userAgent` text,\n\t`createdAt` timestamp NOT NULL DEFAULT (now()),\n\tCONSTRAINT `email_login_codes_id` PRIMARY KEY(`id`)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 116
+}
