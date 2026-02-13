@@ -26,7 +26,7 @@ export default function Cookies() {
                 Retour
               </Button>
               <div className="flex items-center gap-3">
-                <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663057702655/ngknnkGqmlCKLNcm.png" alt="IMOTION" className="h-16 w-auto" />
+                <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663057702655/ngknnkGqmlCKLNcm.png" alt="IMOTION" className="h-24 w-auto" />
                 <h1 className="text-2xl font-bold text-gray-900">Politique de Cookies</h1>
               </div>
             </div>

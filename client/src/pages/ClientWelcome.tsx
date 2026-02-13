@@ -1,6 +1,7 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { getLoginUrl } from "@/const";
+import { Footer } from "@/components/Footer";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight, Sparkles, Target, Zap, CheckCircle2, MessageSquare, FileText, Scale } from "lucide-react";
 import { useLocation } from "wouter";
@@ -50,7 +51,7 @@ export default function ClientWelcome() {
       >
         <div className="container mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663057702655/ngknnkGqmlCKLNcm.png" alt="IMOTION" className="h-16 w-auto" />
+            <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663057702655/ngknnkGqmlCKLNcm.png" alt="IMOTION" className="h-24 w-auto" />
             <div>
               <h1 className="text-xl font-bold text-gray-900">IMOTION Discovery Pro</h1>
               <p className="text-xs text-gray-600">Votre Partenaire en Transformation Digitale</p>
@@ -320,40 +321,7 @@ export default function ClientWelcome() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12 px-6">
-        <div className="container mx-auto">
-          <div className="grid md:grid-cols-3 gap-8">
-            <div>
-              <div className="flex items-center gap-3 mb-4">
-                <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663057702655/ngknnkGqmlCKLNcm.png" alt="IMOTION" className="h-16 w-auto" />
-                <div>
-                  <h3 className="font-bold text-lg">IMOTION Conseil</h3>
-                  <p className="text-sm text-gray-400">Solutions IA No-Code</p>
-                </div>
-              </div>
-              <p className="text-gray-400 text-sm">
-                Votre Partenaire en Transformation Digitale IA & NoCode
-              </p>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Contact</h4>
-              <div className="space-y-2 text-sm text-gray-400">
-                <p>📧 contact@imotion-conseil.fr</p>
-                <p>🌐 www.imotion-conseil.fr</p>
-              </div>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">À propos</h4>
-              <p className="text-sm text-gray-400">
-                IMOTION Discovery Pro utilise l'intelligence artificielle pour vous aider à définir précisément vos besoins et transformer vos idées en projets réussis.
-              </p>
-            </div>
-          </div>
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400">
-            <p>© 2026 IMOTION Conseil. Tous droits réservés.</p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

@@ -11,7 +11,7 @@ export function Footer() {
           {/* Logo et description */}
           <div className="col-span-1">
             <div className="flex items-center gap-3 mb-4">
-              <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663057702655/ngknnkGqmlCKLNcm.png" alt="IMOTION" className="h-16 w-auto" />
+              <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663057702655/ngknnkGqmlCKLNcm.png" alt="IMOTION" className="h-24 w-auto" />
             </div>
             <h3 className="text-xl font-bold text-white mb-2">IMOTION Discovery Pro</h3>
             <p className="text-sm text-gray-400">
