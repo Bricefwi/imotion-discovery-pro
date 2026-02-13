@@ -79,35 +79,16 @@ Génère un cahier des charges ultra-technique et détaillé incluant :
 Sois très précis et technique. Utilise les meilleures pratiques 2026.
     `.trim();
 
-    const response = await fetch('https://api.perplexity.ai/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${SONAR_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'sonar-pro',
-        messages: [
-          {
-            role: 'system',
-            content: 'Tu es un expert en architecture logicielle et rédaction de cahiers des charges techniques. Tu fournis des spécifications ultra-détaillées et techniques.',
-          },
-          {
-            role: 'user',
-            content: prompt,
-          },
-        ],
-        temperature: 0.3,
-        max_tokens: 4000,
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Perplexity API error: ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    const cdcMarkdown = data.choices[0]?.message?.content || '';
+    // Utiliser le MCP Perplexity au lieu de l'API directe
+    const { execSync } = await import('child_process');
+    
+    const inputJson = JSON.stringify({ query: prompt }).replace(/'/g, "'\\''");
+    const mcpCommand = `manus-mcp-cli tool call ask_perplexity --server perplexity --input '${inputJson}'`;
+    
+    const result = execSync(mcpCommand, { encoding: 'utf-8' });
+    const parsed = JSON.parse(result);
+    
+    const cdcMarkdown = parsed.answer || '';
 
     // Générer le prompt pour Product Builder
     const productBuilderPrompt = await generateProductBuilderPrompt(projectData, cdcMarkdown);
@@ -159,35 +140,16 @@ ${cdcMarkdown}
 Le prompt doit être prêt à être copié-collé dans un Product Builder pour générer l'application complète.
     `.trim();
 
-    const response = await fetch('https://api.perplexity.ai/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${SONAR_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'sonar-pro',
-        messages: [
-          {
-            role: 'system',
-            content: 'Tu es un expert en prompt engineering pour les Product Builders IA. Tu crées des prompts ultra-détaillés et optimisés.',
-          },
-          {
-            role: 'user',
-            content: prompt,
-          },
-        ],
-        temperature: 0.2,
-        max_tokens: 3000,
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Perplexity API error: ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    return data.choices[0]?.message?.content || generateFallbackPrompt(projectData);
+    // Utiliser le MCP Perplexity au lieu de l'API directe
+    const { execSync } = await import('child_process');
+    
+    const inputJson = JSON.stringify({ query: prompt }).replace(/'/g, "'\\''");
+    const mcpCommand = `manus-mcp-cli tool call ask_perplexity --server perplexity --input '${inputJson}'`;
+    
+    const result = execSync(mcpCommand, { encoding: 'utf-8' });
+    const parsed = JSON.parse(result);
+    
+    return parsed.answer || generateFallbackPrompt(projectData);
   } catch (error) {
     console.error('[CDCGenerator] Error generating Product Builder prompt:', error);
     return generateFallbackPrompt(projectData);

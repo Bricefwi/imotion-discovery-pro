@@ -712,3 +712,16 @@
 - [ ] Validation stricte de toutes les entrées utilisateur
 - [ ] Chiffrement des données sensibles
 - [ ] Logs de sécurité et monitoring
+
+
+## SIMPLIFICATIONS ET OPTIMISATIONS
+
+### Authentification
+- [x] Supprimer les boutons OAuth (Google, Microsoft, Apple) de la page Login
+- [x] Garder uniquement l'authentification par email avec code 6 chiffres
+- [ ] Nettoyer le code OAuth inutilisé (services, routers)
+
+### Perplexity Pro via MCP
+- [x] Modifier le service de devis intelligent pour utiliser Perplexity MCP
+- [x] Modifier le service CDC pour utiliser Perplexity MCP
+- [ ] Tester l'intégration MCP Perplexity

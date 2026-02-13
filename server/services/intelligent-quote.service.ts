@@ -51,66 +51,39 @@ interface QuoteBreakdown {
 }
 
 /**
- * Utilise Perplexity Pro pour obtenir les prix du marché
+ * Utilise Perplexity Pro via MCP pour obtenir les prix du marché
  */
 async function getMarketBenchmark(projectType: string): Promise<{
   minPrice: number;
   avgPrice: number;
   maxPrice: number;
 }> {
-  const SONAR_API_KEY = process.env.SONAR_API_KEY;
-  
-  if (!SONAR_API_KEY) {
-    console.warn('[IntelligentQuote] Perplexity API key not configured, using default values');
-    return {
-      minPrice: 5000,
-      avgPrice: 15000,
-      maxPrice: 50000,
-    };
-  }
-
   try {
-    const response = await fetch('https://api.perplexity.ai/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${SONAR_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'sonar-pro',
-        messages: [
-          {
-            role: 'system',
-            content: 'Tu es un expert en tarification de projets web. Réponds uniquement avec des chiffres au format JSON.',
-          },
-          {
-            role: 'user',
-            content: `Quel est le prix moyen du marché français en 2026 pour un projet de type "${projectType}" ? Donne-moi le prix minimum, moyen et maximum en euros. Réponds au format JSON : {"minPrice": X, "avgPrice": Y, "maxPrice": Z}`,
-          },
-        ],
-        temperature: 0.2,
-        max_tokens: 200,
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Perplexity API error: ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    const content = data.choices[0]?.message?.content || '{}';
+    // Utiliser le MCP Perplexity au lieu de l'API directe
+    const { execSync } = await import('child_process');
     
-    // Extraire le JSON de la réponse
-    const jsonMatch = content.match(/\{[^}]+\}/);
-    if (jsonMatch) {
-      const prices = JSON.parse(jsonMatch[0]);
-      return {
-        minPrice: prices.minPrice || 5000,
-        avgPrice: prices.avgPrice || 15000,
-        maxPrice: prices.maxPrice || 50000,
-      };
+    const query = `Quel est le prix moyen en France en 2026 pour développer ${projectType}? Donne-moi le prix minimum, moyen et maximum en euros. Réponds uniquement avec les chiffres au format JSON: {"minPrice": X, "avgPrice": Y, "maxPrice": Z}`;
+    
+    const inputJson = JSON.stringify({ query }).replace(/'/g, "'\\''");
+    const mcpCommand = `manus-mcp-cli tool call ask_perplexity --server perplexity --input '${inputJson}'`;
+    
+    const result = execSync(mcpCommand, { encoding: 'utf-8' });
+    const parsed = JSON.parse(result);
+    
+    // Extraire les prix de la réponse
+    if (parsed.answer) {
+      const match = parsed.answer.match(/{"minPrice":\s*(\d+),\s*"avgPrice":\s*(\d+),\s*"maxPrice":\s*(\d+)}/);
+      if (match) {
+        return {
+          minPrice: parseInt(match[1]),
+          avgPrice: parseInt(match[2]),
+          maxPrice: parseInt(match[3]),
+        };
+      }
     }
 
+    // Valeurs par défaut si l'extraction échoue
+    console.warn('[IntelligentQuote] Could not extract prices from Perplexity response, using defaults');
     return {
       minPrice: 5000,
       avgPrice: 15000,
