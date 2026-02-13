@@ -83,7 +83,7 @@ export default function ClientProjects() {
       <header className="bg-white shadow-sm">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663057702655/ngknnkGqmlCKLNcm.png" alt="IMOTION" className="h-10 w-auto" />
+            <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663057702655/ngknnkGqmlCKLNcm.png" alt="IMOTION" className="h-16 w-auto" />
             <div>
               <h1 className="text-xl font-bold text-gray-900">Mes Projets</h1>
               <p className="text-sm text-gray-600">{user?.name || user?.email}</p>
