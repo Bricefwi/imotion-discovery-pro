@@ -69,7 +69,7 @@ Bonjour ${client[0].name || 'Client'},
 
 Nous avons remarqué que vous n'avez pas encore validé le devis ${quote.quoteNumber} pour le projet "${project[0].title}".
 
-**Montant :** ${quote.totalTTC?.toLocaleString('fr-FR')}€ TTC
+**Montant :** ${Number(quote.totalTTC || 0).toLocaleString('fr-FR')}€ TTC
 
 Nous restons à votre disposition pour toute question ou modification.
 
@@ -84,7 +84,7 @@ L'équipe IMOTION
   <p>Bonjour ${client[0].name || 'Client'},</p>
   <p>Nous avons remarqué que vous n'avez pas encore validé le devis <strong>${quote.quoteNumber}</strong> pour le projet "<strong>${project[0].title}</strong>".</p>
   <div style="background: #f5f5f5; padding: 15px; border-left: 4px solid #d8232a; margin: 20px 0;">
-    <p style="margin: 0;"><strong>Montant :</strong> ${quote.totalTTC?.toLocaleString('fr-FR')}€ TTC</p>
+    <p style="margin: 0;"><strong>Montant :</strong> ${Number(quote.totalTTC || 0).toLocaleString('fr-FR')}€ TTC</p>
   </div>
   <p>Nous restons à votre disposition pour toute question ou modification.</p>
   <p>Cordialement,<br>L'équipe IMOTION</p>
@@ -180,7 +180,7 @@ Bonjour ${client[0].name || 'Client'},
 
 Nous constatons que le paiement pour la phase "${payment.phaseName}" du projet "${project[0].title}" est en retard de ${daysOverdue} jours.
 
-**Montant dû :** ${payment.amount?.toLocaleString('fr-FR')}€
+**Montant dû :** ${Number(payment.amount || 0).toLocaleString('fr-FR')}€
 **Date d'échéance :** ${payment.dueDate.toLocaleDateString('fr-FR')}
 
 Merci de régulariser votre situation dans les plus brefs délais.
@@ -251,7 +251,7 @@ export async function generateReceptionReports(): Promise<{
         const client = await db
           .select()
           .from(users)
-          .where(eq(users.id, project.userId))
+          .where(eq(users.id, project.clientId))
           .limit(1);
 
         if (client[0] && client[0].email) {
@@ -489,7 +489,7 @@ Bonjour ${client[0].name || 'Client'},
 
 Veuillez trouver ci-joint la facture ${invoiceNumber} pour la phase "${payment.phaseName}" du projet "${project[0].title}".
 
-**Montant :** ${payment.amount?.toLocaleString('fr-FR')}€
+**Montant :** ${Number(payment.amount || 0).toLocaleString('fr-FR')}€
 **Échéance :** ${payment.dueDate.toLocaleDateString('fr-FR')}
 
 Cordialement,
