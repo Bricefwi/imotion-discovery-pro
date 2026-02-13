@@ -50,7 +50,7 @@ export default function ClientWelcome() {
       >
         <div className="container mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src="/logoImotion.png" alt="IMOTION" className="h-10 w-auto" />
+            <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663057702655/ngknnkGqmlCKLNcm.png" alt="IMOTION" className="h-10 w-auto" />
             <div>
               <h1 className="text-xl font-bold text-gray-900">IMOTION Discovery Pro</h1>
               <p className="text-xs text-gray-600">Votre Partenaire en Transformation Digitale</p>
@@ -325,7 +325,7 @@ export default function ClientWelcome() {
           <div className="grid md:grid-cols-3 gap-8">
             <div>
               <div className="flex items-center gap-3 mb-4">
-                <img src="/logoImotion.png" alt="IMOTION" className="h-10 w-auto" />
+                <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663057702655/ngknnkGqmlCKLNcm.png" alt="IMOTION" className="h-10 w-auto" />
                 <div>
                   <h3 className="font-bold text-lg">IMOTION Conseil</h3>
                   <p className="text-sm text-gray-400">Solutions IA No-Code</p>

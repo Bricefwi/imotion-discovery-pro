@@ -76,7 +76,7 @@ export default function OAuthCallback() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
       <div className="text-center space-y-4">
         <img
-          src="/logo-imotion.png"
+          src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663057702655/ngknnkGqmlCKLNcm.png"
           alt="IMOTION"
           className="h-16 mx-auto mb-8"
         />

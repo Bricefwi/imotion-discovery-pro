@@ -43,7 +43,7 @@ export default function Home() {
       <header className="bg-white shadow-sm">
         <div className="container mx-auto px-4 py-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src="/logo-imotion.png" alt="IMOTION" className="h-32 w-auto" />
+            <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663057702655/ngknnkGqmlCKLNcm.png" alt="IMOTION" className="h-32 w-auto" />
             <div>
               <h1 className="text-2xl font-bold text-gray-900">IMOTION Discovery Pro</h1>
               <p className="text-sm text-gray-600">Votre Partenaire en Transformation Digitale</p>

@@ -18,7 +18,7 @@ export function SEO({
   title = 'IMOTION Discovery Pro - Transformez vos idées en projets digitaux réussis',
   description = 'Plateforme intelligente de découverte de besoins et génération automatique de cahiers des charges. Guidé par IA, 7 phases de découverte, CDC professionnel en 30 minutes.',
   keywords = 'cahier des charges, CDC, IA, intelligence artificielle, transformation digitale, consultant digital, génération automatique, discovery, analyse besoins',
-  ogImage = 'https://3000-ix81q05nlqa6bzufpy469-4cced573.us2.manus.computer/logo-imotion.png',
+  ogImage = 'https://3000-ix81q05nlqa6bzufpy469-4cced573.us2.manus.computerhttps://files.manuscdn.com/user_upload_by_module/session_file/310519663057702655/ngknnkGqmlCKLNcm.png',
   ogType = 'website',
   canonical,
   noindex = false,

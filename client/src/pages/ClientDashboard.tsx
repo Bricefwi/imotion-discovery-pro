@@ -82,7 +82,7 @@ export default function ClientDashboard() {
           <div className="container mx-auto px-4 py-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <img src="/logo-imotion.png" alt="IMOTION" className="h-16 w-auto" />
+                <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663057702655/ngknnkGqmlCKLNcm.png" alt="IMOTION" className="h-16 w-auto" />
                 <div>
                   <h1 className="text-2xl font-bold text-gray-900">Mon Espace Client</h1>
                   <p className="text-sm text-gray-600">Bienvenue, {user?.name || 'Client'}</p>

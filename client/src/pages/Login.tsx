@@ -112,7 +112,7 @@ export default function Login() {
         {/* Logo et titre */}
         <div className="text-center space-y-2">
           <img
-            src="/logo-imotion.png"
+            src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663057702655/ngknnkGqmlCKLNcm.png"
             alt="IMOTION"
             className="h-16 mx-auto mb-4"
           />

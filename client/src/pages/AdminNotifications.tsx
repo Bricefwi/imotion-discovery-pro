@@ -30,7 +30,7 @@ export default function AdminNotifications() {
     if (Notification.permission === "granted") {
       new Notification("Nouvelle inscription", {
         body: `${data.user.name || data.user.email} s'est inscrit(e)`,
-        icon: "/logo-imotion.png",
+        icon: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663057702655/ngknnkGqmlCKLNcm.png",
       });
     }
   });
